@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { internalError } from "../utils/apiResponse";
 
 export const errorHandler = (
@@ -11,6 +11,7 @@ export const errorHandler = (
   internalError(res);
 };
 
-export const wrap =
-  (fn: Function) => (req: Request, res: Response, next: NextFunction) =>
-    fn(req, res).catch(next);
+export const asyncHandler =
+  (fn: RequestHandler): RequestHandler =>
+  (req: Request, res: Response, next: NextFunction): Promise<any> =>
+    Promise.resolve(fn(req, res, next)).catch(next);

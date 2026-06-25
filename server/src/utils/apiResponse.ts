@@ -1,6 +1,4 @@
-// apiResponse.ts
-
-import { Request, Response, NextFunction } from "express";
+import { Response } from "express";
 
 type ApiData = Record<string, unknown> | unknown[] | null;
 
