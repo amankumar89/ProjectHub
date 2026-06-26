@@ -1,5 +1,4 @@
 import app from "./src/app";
-import { error } from "node:console";
 import { PORT } from "./src/config/env";
 
 app.listen(PORT, (error) => {
