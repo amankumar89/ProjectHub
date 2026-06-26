@@ -1,11 +1,14 @@
-import { Config, defineConfig } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 import { DATABASE_URL } from "./src/config/env";
+import { neonConfig } from "@neondatabase/serverless";
+
+neonConfig.webSocketConstructor = WebSocket;
 
 export default defineConfig({
   schema: "./src/db/schema.ts",
-  out: "./migrations",
+  out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {
-    url: DATABASE_URL!,
+    url: Bun.env.DATABASE_URL!,
   },
-}) as Config;
+});
