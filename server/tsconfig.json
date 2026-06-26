@@ -1,39 +1,30 @@
 {
   "compilerOptions": {
-    "types": ["node", "bun"],
+    "lib": ["ESNext"],
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "Preserve",
     "moduleResolution": "bundler",
-    "noEmit": true, // Bun executes TS files directly, no need to output JS files
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
     "strict": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": ["server/**/*"],
-  "exclude": ["node_modules"]
+    "types": ["bun"]
+  }
 }
 
 // {
 //   "compilerOptions": {
-//     "lib": ["ESNext"],
-//     "target": "ESNext",
-//     "module": "Preserve",
-//     "moduleDetection": "force",
-//     "jsx": "react-jsx",
-//     "allowJs": true,
+//     "types": ["bun", "node"],
+//     "target": "es2022",
+//     "module": "ESNext",
 //     "moduleResolution": "bundler",
-//     "allowImportingTsExtensions": true,
-//     "verbatimModuleSyntax": true,
-//     "noEmit": true,
+//     "noEmit": true, // Bun executes TS files directly, no need to output JS files
 //     "strict": true,
 //     "skipLibCheck": true,
-//     "noFallthroughCasesInSwitch": true,
-//     "noUncheckedIndexedAccess": true,
-//     "noImplicitOverride": true,
-//     "noUnusedLocals": false,
-//     "noUnusedParameters": false,
-//     "noPropertyAccessFromIndexSignature": false
-//   }
+//     "esModuleInterop": true,
+//     "isolatedModules": true,
+//     "forceConsistentCasingInFileNames": true
+//   },
+//   "include": ["server/**/*"],
+//   "exclude": ["node_modules"]
 // }
