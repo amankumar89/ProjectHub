@@ -10,22 +10,14 @@ export interface AuthRequest extends Request {
   user?: JwtPayload;
 }
 
-export const getToken = (req: AuthRequest) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader?.startsWith("Bearer ")) {
-    return authHeader.split(" ")[1];
-  }
-
-  return req.cookies?.token;
-};
-
 export const authenticate = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
-    const token = getToken(req);
+    let token;
+    const authHeader = req.headers?.authorization;
 
-    if (!token) {
-      return unauthorized(res, "Unauthorized");
-    }
+    if (authHeader?.startsWith("Bearer ")) token = authHeader?.split(" ")[1];
+
+    if (!token) return unauthorized(res, "Unauthorized");
 
     const decoded = (await verifyToken(
       token,
