@@ -1,9 +1,15 @@
-import express, { type Request, type Response } from "express";
+import express from "express";
+import cors from "cors";
+import routes from "./routes/index";
+import { errorHandler } from "./middlewares/error-handler.middleware";
 
 const app = express();
 
-app.get("/", (req: Request, res: Response) => {
-  return res.send("ProjectHub Server is up & running.");
-});
+app.use(cors());
+app.use(express.json());
+
+app.use(routes);
+
+app.use(errorHandler);
 
 export default app;
