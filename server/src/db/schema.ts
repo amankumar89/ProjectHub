@@ -7,7 +7,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const roles = ["USER", "ADMIN", "TEACHER"] as const;
+export const roles = ["USER", "ADMIN", "TEACHER", "STUDENT"] as const;
 export const userRoleEnum = pgEnum("user_role", roles);
 export type UserRole = (typeof roles)[number];
 
