@@ -1,5 +1,11 @@
 import bcrypt from "bcryptjs";
-import { users, type User } from "../db/schema";
+import { type User } from "../db/schema";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+
+export const asyncHandler =
+  (fn: RequestHandler): RequestHandler =>
+  (req: Request, res: Response, next: NextFunction): Promise<any> =>
+    Promise.resolve(fn(req, res, next)).catch(next);
 
 export const hashedPassword = async (password: string, salt: number = 12) =>
   await bcrypt.hash(password, salt);

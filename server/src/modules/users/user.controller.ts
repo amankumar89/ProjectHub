@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
-import { asyncHandler } from "../../middlewares/error-handler.middleware";
-import { badRequest, notFound, success } from "../../utils/apiResponse";
+import { asyncHandler } from "../../utils/helper";
 import { findAllUsers, findUserById } from "../../services/user.service";
 import {
   userRoleEnum,
@@ -10,6 +9,11 @@ import {
   type UserStatus,
 } from "../../db/schema";
 import { profileUser } from "../../utils/helper";
+import {
+  sendBadRequest,
+  sendNotFound,
+  sendSuccess,
+} from "../../utils/response";
 
 const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   let {
@@ -23,11 +27,11 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   } = req.query;
 
   if (role && !userRoleEnum.enumValues.includes(role as UserRole)) {
-    return badRequest(res, `Role must be ${userRoleEnum.enumValues}`);
+    return sendBadRequest(res, `Role must be ${userRoleEnum.enumValues}`);
   }
 
   if (status && !userStatusEnum.enumValues.includes(status as UserStatus)) {
-    return badRequest(res, `Status must be ${userStatusEnum.enumValues}`);
+    return sendBadRequest(res, `Status must be ${userStatusEnum.enumValues}`);
   }
 
   page = Number(page);
@@ -45,21 +49,21 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     sortBy as keyof User,
     order as "asc" | "desc",
   );
-  success(res, users, "Data Fetched Successfully");
+  sendSuccess(res, "Data fetched successfully", users);
 });
 const getUserById = asyncHandler(async (req: Request, res: Response) => {
   let tempId = Number(
     req.user?.role === "ADMIN" ? req.params.id : req.user?.id,
   );
   const [user] = await findUserById(tempId);
-  if (!user) notFound(res, "User not Found");
-  success(res, profileUser(user), "User Fetched Successfully");
+  if (!user) sendNotFound(res, "User not Found");
+  sendSuccess(res, "User fetched successfully", profileUser(user));
 });
 const updateUserById = asyncHandler(async (req: Request, res: Response) => {
-  success(res, [], "User Updated Successfully");
+  sendSuccess(res, "User updated successfully", []);
 });
 const deleteUserById = asyncHandler(async (req: Request, res: Response) => {
-  success(res, [], "User Deleted Successfully");
+  sendSuccess(res, "User deleted successfully", []);
 });
 
 const usersController = {

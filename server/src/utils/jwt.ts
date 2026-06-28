@@ -13,7 +13,7 @@ export interface JwtPayload {
   role: UserRole;
 }
 
-export const signToken = (
+const signToken = (
   payload: JwtPayload,
   secret: Secret,
   expiresIn: SignOptions["expiresIn"],
@@ -34,7 +34,7 @@ export const generateToken = async (
   payload: {
     id: number;
     email: string;
-    role: "USER" | "ADMIN" | "TEACHER";
+    role: UserRole;
   },
 ) => {
   const secret: Secret =

@@ -1,12 +1,5 @@
 import type { Request, Response } from "express";
-import { asyncHandler } from "../../middlewares/error-handler.middleware";
-import {
-  conflict,
-  created,
-  notFound,
-  success,
-  unauthorized,
-} from "../../utils/apiResponse";
+import { asyncHandler } from "../../utils/helper";
 import type { NewUser } from "../../db/schema";
 import {
   createUser,
@@ -20,6 +13,13 @@ import {
   publicUser,
 } from "../../utils/helper";
 import { generateToken } from "../../utils/jwt";
+import {
+  sendConflict,
+  sendCreated,
+  sendNotAuthorized,
+  sendNotFound,
+  sendSuccess,
+} from "../../utils/response";
 
 const COOKIE_NAME = "token";
 const COOKIE_OPTIONS = {
@@ -37,7 +37,8 @@ const register = asyncHandler(async (req: Request, res: Response) => {
   const existingEmail = await findUserByEmail(email);
 
   // if yes return error
-  if (existingEmail.length > 0) return conflict(res, "Email already exists");
+  if (existingEmail.length > 0)
+    return sendConflict(res, "Email already exists");
 
   // hashed password
   const passwordHashed = await hashedPassword(password);
@@ -58,7 +59,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
   res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
 
   // return 201 user created
-  return created(res, publicUser(savedUser), "User Created Successfully");
+  return sendCreated(res, "User created successfully", publicUser(savedUser));
 });
 
 // login
@@ -66,13 +67,15 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   // check user exists or not, if not return error 401
   const [user] = await findUserByEmail(email);
-  if (!user) return unauthorized(res, "Invalid username or password");
+  if (!user) return sendNotAuthorized(res, "Invalid username or password");
 
   // verify password if not correct return error 401
   const passwordValid = await comparePassword(password, user.password);
-  if (!passwordValid) return unauthorized(res, "Invalid username or password");
+  if (!passwordValid)
+    return sendNotAuthorized(res, "Invalid username or password");
 
-  if (user.status !== "ACTIVE") return success(res, null, "User is not ACTIVE");
+  if (user.status !== "ACTIVE")
+    return sendSuccess(res, "User is not ACTIVE", null);
 
   // generate token and return it
   const token = await generateToken("access", {
@@ -84,7 +87,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
   console.log(token);
 
-  success(res, { user: publicUser(user), token }, "Logged in Successfull");
+  sendSuccess(res, "Logged in successfull", { user: publicUser(user), token });
 });
 
 // user profile
@@ -92,9 +95,9 @@ const profile = asyncHandler(async (req: Request, res: Response) => {
   // if authorized user exists return it data
   const [user] = await findUserById(Number(req.user?.id));
 
-  if (!user) return notFound(res, "User not found");
+  if (!user) return sendNotFound(res, "User not found");
 
-  return success(res, profileUser(user), "Data Fetch Successfully");
+  return sendSuccess(res, "Data fetched successfully", profileUser(user));
 });
 
 // logout
@@ -102,7 +105,7 @@ const logout = asyncHandler(async (req: Request, res: Response) => {
   // remove token access, refresh both
   res.clearCookie("token", COOKIE_OPTIONS);
 
-  return success(res, null, "Logout Successfully");
+  return sendSuccess(res, "Logout successfully", null);
 });
 
 const authController = {

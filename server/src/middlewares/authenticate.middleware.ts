@@ -2,9 +2,9 @@ import type { Request, Response, NextFunction } from "express";
 import { type Secret } from "jsonwebtoken";
 import { verifyToken, type JwtPayload } from "../utils/jwt";
 import { JWT_ACCESS_SECRET } from "../config/env";
-import { asyncHandler } from "./error-handler.middleware";
-import { unauthorized } from "../utils/apiResponse";
+import { asyncHandler } from "../utils/helper";
 import type { UserRole } from "../db/schema";
+import { sendNotAuthorized } from "../utils/response";
 
 export interface AuthRequest extends Request {
   user?: JwtPayload;
@@ -17,14 +17,14 @@ export const authenticate = asyncHandler(
 
     if (authHeader?.startsWith("Bearer ")) token = authHeader?.split(" ")[1];
 
-    if (!token) return unauthorized(res, "Unauthorized");
+    if (!token) return sendNotAuthorized(res, "Unauthorized");
 
     const decoded = (await verifyToken(
       token,
       JWT_ACCESS_SECRET as Secret,
     )) as JwtPayload;
 
-    if (!decoded) return unauthorized(res, "Unauthorized: Token Expired");
+    if (!decoded) return sendNotAuthorized(res, "Unauthorized: Token Expired");
 
     req.user = decoded;
 
