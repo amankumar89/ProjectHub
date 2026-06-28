@@ -84,7 +84,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
   console.log(token);
 
-  success(res, publicUser(user), "Logged in Successfull");
+  success(res, { user: publicUser(user), token }, "Logged in Successfull");
 });
 
 // user profile
