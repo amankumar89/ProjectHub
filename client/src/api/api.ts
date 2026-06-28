@@ -13,9 +13,7 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (res) => {
-    return res;
-  },
+  (res) => res,
   (err) => {
     if (err.response?.status === 401) {
       useAuthStore.getState().clearAuth();

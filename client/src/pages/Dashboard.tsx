@@ -4,13 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { useLogout } from "../hooks/useAuth";
 
-interface CardItem {
-  icon: string;
-  title: string;
-  desc: string;
-  path: string;
-}
-
 const ADMIN_CARDS: CardItem[] = [
   { icon: "👤", title: "Users", desc: "Manage all users", path: "/users" },
   { icon: "✅", title: "Tasks", desc: "Track your tasks", path: "/tasks" },
@@ -79,7 +72,7 @@ const LogoutBtn = styled.button.attrs({
 
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
-  const { logout } = useLogout();
+  const { mutate } = useLogout();
   const navigate = useNavigate();
 
   const cards = getCards(user?.role ?? "");
@@ -93,7 +86,7 @@ const Dashboard: React.FC = () => {
             Welcome, {user?.name} · {user?.role}
           </Subtitle>
         </div>
-        <LogoutBtn onClick={logout}>Logout</LogoutBtn>
+        <LogoutBtn onClick={() => mutate()}>Logout</LogoutBtn>
       </Header>
 
       <Grid>

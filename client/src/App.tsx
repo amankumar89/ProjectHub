@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import PublicRoute from "./routes/PublicRoute";
 
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
@@ -9,7 +10,6 @@ import Students from "./pages/Students";
 import Notes from "./pages/Notes";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
-import PublicRoute from "./routes/PublicRoute";
 
 const App: React.FC = () => {
   return (

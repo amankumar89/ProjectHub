@@ -1,29 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { useAuthStore, type User } from "../store/authStore";
 import api from "../api/api";
+import toast from "react-hot-toast";
+import { useAuthStore } from "../store/authStore";
+import type { AxiosError } from "axios";
 
-interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-interface RegisterPayload {
-  name: string;
-  email: string;
-  password: string;
-}
-
-interface ApiResponse {
-  success: boolean;
-  message: string;
-  data: { user: User; token: string } | User | null;
-  token?: string;
-}
-
-const getMsg = (res: ApiResponse, fallback: string): string =>
-  res?.message || fallback;
+const getMsg = (
+  res: ApiResponse<User | UserWithToken | null>,
+  fallback: string,
+): string => res?.message || fallback;
 
 export const useLogin = () => {
   const { setAuth } = useAuthStore();
@@ -31,12 +16,14 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: (data: LoginPayload) =>
-      api.post<ApiResponse>("/auth/login", data).then((res) => res.data),
+      api
+        .post<ApiResponse<UserWithToken>>("/auth/login", data)
+        .then((res) => res.data),
 
     onSuccess: (data) => {
       toast.success(getMsg(data, "Logged in successfully"));
 
-      const { user, token } = data.data;
+      const { user, token } = data.data as UserWithToken;
 
       if (!user) return;
 
@@ -53,7 +40,7 @@ export const useLogin = () => {
       navigate("/dashboard");
     },
 
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiError>) => {
       const msg =
         error?.response?.data?.message || "Login failed. Please try again.";
       toast.error(msg);
@@ -66,14 +53,16 @@ export const useRegister = () => {
 
   return useMutation({
     mutationFn: (data: RegisterPayload) =>
-      api.post<ApiResponse>("/auth/register", data).then((res) => res.data),
+      api
+        .post<ApiResponse<User>>("/auth/register", data)
+        .then((res) => res.data),
 
     onSuccess: (data) => {
       toast.success(getMsg(data, "Account created successfully"));
       navigate("/login");
     },
 
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiError>) => {
       const msg =
         error?.response?.data?.message ||
         "Registration failed. Please try again.";
@@ -86,11 +75,20 @@ export const useLogout = () => {
   const { clearAuth } = useAuthStore();
   const navigate = useNavigate();
 
-  const logout = () => {
-    clearAuth();
-    toast.success("Logged out successfully");
-    navigate("/login");
-  };
+  return useMutation({
+    mutationFn: () =>
+      api.get<ApiResponse<User>>("/auth/logout").then((res) => res.data),
 
-  return { logout };
+    onSuccess: (data) => {
+      clearAuth();
+      toast.success(getMsg(data, "Logged out successfully"));
+      navigate("/login");
+    },
+
+    onError: (error: AxiosError<ApiError>) => {
+      const msg =
+        error?.response?.data?.message || "Logout failed. Please try again.";
+      toast.error(msg);
+    },
+  });
 };
