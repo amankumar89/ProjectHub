@@ -4,12 +4,13 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 
 import Dashboard from "./pages/Dashboard";
-import Users from "./pages/Users";
+import Users from "./pages/Userssssss";
 import Tasks from "./pages/Tasks";
 import Students from "./pages/Students";
 import Notes from "./pages/Notes";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import ProfilePage from "./pages/Profile";
 
 const App: React.FC = () => {
   return (
@@ -41,6 +42,17 @@ const App: React.FC = () => {
               allowedRoles={["ADMIN", "TEACHER", "STUDENT", "USER"]}
             >
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/profile"
+          element={
+            <ProtectedRoute
+              allowedRoles={["ADMIN", "TEACHER", "STUDENT", "USER"]}
+            >
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

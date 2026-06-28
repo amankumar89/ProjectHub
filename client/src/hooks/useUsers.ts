@@ -11,34 +11,59 @@ interface UsersResponse {
   totalPages: number;
 }
 
-// GET ALL
-export const useGetUsers = () => {
+// ─── GET ALL (with filters) ───────────────────────────────────────────────────
+
+export const useGetUsers = (filters: UserFilters) => {
   return useQuery({
-    queryKey: ["users"],
+    queryKey: ["users", filters],
     queryFn: () =>
-      api.get<ApiResponse<UsersResponse>>("/users").then((res) => {
-        const data: UsersResponse = res?.data?.data;
-        return data;
-      }),
+      api
+        .get<ApiResponse<UsersResponse>>("/users", { params: filters })
+        .then((res) => res.data.data),
   });
 };
 
-// GET BY ID
-export const useGetUserById = (id: string) => {
+// ─── GET BY ID ────────────────────────────────────────────────────────────────
+
+export const useGetUserById = (id: number, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["users", id],
     queryFn: () =>
-      api.get<ApiResponse<User>>(`/users/${id}`).then((res) => res.data),
-    enabled: !!id,
+      api.get<ApiResponse<User>>(`/users/${id}`).then((res) => res.data.data), // was: res.data (missing .data)
+    enabled: options?.enabled ?? (!!id && id > 0),
   });
 };
 
-// UPDATE
+// ─── CREATE USER ──────────────────────────────────────────────────────────────
+
+export const useCreateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (
+      data: UserFormData, // was: ({ data }) — wrong shape
+    ) => api.post<ApiResponse<User>>("/users", data).then((res) => res.data),
+
+    onSuccess: (res) => {
+      toast.success(res.message || "User created successfully");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+
+    onError: (error: AxiosError<ApiError>) => {
+      toast.error(
+        error?.response?.data?.message || "Failed to create user", // was: "Failed to update user"
+      );
+    },
+  });
+};
+
+// ─── UPDATE USER ──────────────────────────────────────────────────────────────
+
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<User> }) =>
+    mutationFn: ({ id, ...data }: { id: number } & Partial<UserFormData>) =>
       api.put<ApiResponse<User>>(`/users/${id}`, data).then((res) => res.data),
 
     onSuccess: (res) => {
@@ -52,7 +77,8 @@ export const useUpdateUser = () => {
   });
 };
 
-// DELETE
+// ─── DELETE USER ──────────────────────────────────────────────────────────────
+
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
 

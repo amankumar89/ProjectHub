@@ -2,7 +2,7 @@ type Status = "ACTIVE" | "INACTIVE" | "BLOCKED" | "DELETED";
 type Role = "USER" | "ADMIN" | "TEACHER" | "STUDENT";
 
 interface User {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   role: Role;
@@ -35,10 +35,12 @@ interface ApiResponse<T> {
 }
 
 interface CardItem {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   desc: string;
   path: string;
+  accent: string;
+  bgAccent: string;
 }
 
 interface AuthState {
@@ -53,4 +55,25 @@ interface AuthState {
 
 interface ApiError {
   message: string;
+  statusCode: number;
+}
+
+type SortOrder = "asc" | "desc";
+
+interface UserFilters {
+  page: number;
+  limit: number;
+  role?: Role | "";
+  status?: Status | "";
+  sortBy?: string;
+  order?: SortOrder;
+  search?: string;
+}
+
+interface UserFormData {
+  name: string;
+  email: string;
+  password?: string;
+  role: Role;
+  status: Status;
 }
