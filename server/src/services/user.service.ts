@@ -2,6 +2,7 @@ import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import {
   users,
   type NewUser,
+  type UpdateUser,
   type User,
   type UserRole,
   type UserStatus,
@@ -15,10 +16,6 @@ export const findUserByEmail = async (email: string) => {
 
 export const createUser = async (data: NewUser) => {
   return await db.insert(users).values(data).returning();
-};
-
-export const updateUser = async (id: number, data: Partial<NewUser>) => {
-  return await db.update(users).set(data).where(eq(users.id, id)).returning();
 };
 
 export const findUserById = async (id: number) => {
@@ -92,4 +89,32 @@ export const findAllUsers = async (
     limit,
     totalPages: Math.ceil(Number(count) / limit),
   };
+};
+
+export const updateUser = async (
+  id: number,
+  payload: UpdateUser,
+): Promise<User | null> => {
+  const [updatedUser] = await db
+    .update(users)
+    .set({
+      ...payload,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, id))
+    .returning();
+  return updatedUser;
+};
+
+export const deleteUser = async (id: number): Promise<User | null> => {
+  const [deletedUser] = await db
+    .update(users)
+    .set({
+      updatedAt: new Date(),
+      deletedAt: new Date(),
+      status: "DELETED",
+    })
+    .where(eq(users.id, id))
+    .returning();
+  return deletedUser;
 };

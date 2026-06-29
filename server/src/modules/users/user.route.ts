@@ -6,7 +6,7 @@ const usersRoute = Router();
 
 usersRoute.get("/", authorize(["ADMIN"]), usersController.getAllUsers);
 usersRoute.get("/:id", usersController.getUserById);
-usersRoute.put("/:id", usersController.updateUserById);
+usersRoute.patch("/:id", usersController.updateUserById);
 usersRoute.delete("/:id", usersController.deleteUserById);
 
 export default usersRoute;

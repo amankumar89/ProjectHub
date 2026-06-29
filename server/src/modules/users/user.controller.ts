@@ -1,6 +1,11 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../../utils/helper";
-import { findAllUsers, findUserById } from "../../services/user.service";
+import {
+  deleteUser,
+  findAllUsers,
+  findUserById,
+  updateUser,
+} from "../../services/user.service";
 import {
   userRoleEnum,
   userStatusEnum,
@@ -49,21 +54,42 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     sortBy as keyof User,
     order as "asc" | "desc",
   );
-  sendSuccess(res, "Data fetched successfully", users);
+  return sendSuccess(res, "Data fetched successfully", users);
 });
+
 const getUserById = asyncHandler(async (req: Request, res: Response) => {
   let tempId = Number(
     req.user?.role === "ADMIN" ? req.params.id : req.user?.id,
   );
   const [user] = await findUserById(tempId);
-  if (!user) sendNotFound(res, "User not Found");
-  sendSuccess(res, "User fetched successfully", profileUser(user));
+  if (!user) return sendNotFound(res, "User not Found");
+  return sendSuccess(res, "User fetched successfully", profileUser(user));
 });
+
 const updateUserById = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, "User updated successfully", []);
+  const userId = Number(req.params.id) as any;
+  if (isNaN(userId)) return sendBadRequest(res, "Invalid user ID");
+
+  if (!req?.body || Object.keys(req?.body).length === 0)
+    return sendBadRequest(res, "Request body cannot be empty.");
+
+  const updatedUser = await updateUser(userId, req.body);
+
+  if (!updateUser) return sendNotFound(res, "User not found");
+
+  return sendSuccess(res, "User updated successfully", updatedUser);
 });
+
 const deleteUserById = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, "User deleted successfully", []);
+  const userId = Number(req.params.id) as any;
+
+  if (isNaN(userId)) return sendBadRequest(res, "Invalid user ID");
+
+  const deletedUser = await deleteUser(userId);
+
+  if (!deletedUser) return sendNotFound(res, "User not found");
+
+  return sendSuccess(res, "User deleted successfully", deletedUser);
 });
 
 const usersController = {

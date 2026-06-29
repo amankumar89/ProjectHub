@@ -35,7 +35,12 @@ export const users = pgTable("users", {
     .defaultNow()
     .$onUpdateFn(() => sql`now()`)
     .notNull(),
+  deletedAt: timestamp("deleted_at"), // for soft delete
+  refreshToken: varchar("refresh_token"),
 });
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type UpdateUser = Partial<
+  Pick<User, "name" | "email" | "password" | "role" | "status" | "lastLogin">
+>;

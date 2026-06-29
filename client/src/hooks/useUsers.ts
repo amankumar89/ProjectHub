@@ -64,7 +64,9 @@ export const useUpdateUser = () => {
 
   return useMutation({
     mutationFn: ({ id, ...data }: { id: number } & Partial<UserFormData>) =>
-      api.put<ApiResponse<User>>(`/users/${id}`, data).then((res) => res.data),
+      api
+        .patch<ApiResponse<User>>(`/users/${id}`, data)
+        .then((res) => res.data),
 
     onSuccess: (res) => {
       toast.success(res.message || "User updated successfully");
