@@ -5,6 +5,7 @@ import {
   createUser,
   findUserByEmail,
   findUserById,
+  updateUser,
 } from "../../services/user.service";
 import {
   comparePassword,
@@ -74,6 +75,8 @@ const login = asyncHandler(async (req: Request, res: Response) => {
     email: user.email,
     role: user.role,
   });
+
+  await updateUser(user.id, { lastLogin: new Date(), refreshToken });
 
   res.cookie(COOKIE_NAME, refreshToken, COOKIE_OPTIONS);
   console.log(accessToken);

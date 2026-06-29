@@ -16,9 +16,14 @@ import {
 import { profileUser } from "../../utils/helper";
 import {
   sendBadRequest,
+  sendCreated,
   sendNotFound,
   sendSuccess,
 } from "../../utils/response";
+
+const createUser = asyncHandler(async (req: Request, res: Response) => {
+  return sendCreated(res, "User created", null);
+});
 
 const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   let {
@@ -93,6 +98,7 @@ const deleteUserById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const usersController = {
+  createUser,
   getAllUsers,
   getUserById,
   updateUserById,

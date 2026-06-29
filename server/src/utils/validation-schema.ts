@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { userRoleEnum, userStatusEnum } from "../db/schema";
 
 export const registerSchema = z.object({
   body: z.object({
@@ -26,3 +27,35 @@ export const loginSchema = z.object({
     password: z.string().min(1, "Password is required"),
   }),
 });
+
+export const createUserSchema = z
+  .object({
+    name: z.string().trim().min(1, "Name is required."),
+    email: z.email("Please provide a valid email address."),
+    password: z.string().min(4, "Password must be at least 8 characters long."),
+    role: z.enum(["ADMIN", "USER"], {
+      error: `Role must be ${userRoleEnum.enumValues}`,
+    }),
+
+    status: z.enum(userStatusEnum.enumValues, {
+      error: `Status must be ${userStatusEnum.enumValues}`,
+    }),
+  })
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Request body cannot be empty. Provide all required fields.",
+  });
+
+export const updateUserSchema = z
+  .object({
+    name: z.string().min(1).optional(),
+    email: z.email().optional(),
+    password: z.string().min(8).optional(),
+    role: z.enum(userRoleEnum.enumValues).optional(),
+    status: z.enum(userStatusEnum.enumValues).optional(),
+  })
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message:
+      "Request body cannot be empty. Provide at least one field to update.",
+  });
