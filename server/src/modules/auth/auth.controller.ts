@@ -12,7 +12,7 @@ import {
   profileUser,
   publicUser,
 } from "../../utils/helper";
-import { generateToken } from "../../utils/jwt";
+import { generateTokens } from "../../utils/jwt";
 import {
   sendConflict,
   sendCreated,
@@ -21,7 +21,7 @@ import {
   sendSuccess,
 } from "../../utils/response";
 
-const COOKIE_NAME = "token";
+const COOKIE_NAME = "refreshToken";
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
@@ -49,15 +49,6 @@ const register = asyncHandler(async (req: Request, res: Response) => {
     password: passwordHashed,
   });
 
-  // generate token
-  const token = await generateToken("access", {
-    email,
-    id: savedUser.id,
-    role: savedUser.role,
-  });
-
-  res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
-
   // return 201 user created
   return sendCreated(res, "User created successfully", publicUser(savedUser));
 });
@@ -77,19 +68,19 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   if (user.status !== "ACTIVE")
     return sendSuccess(res, "User is not ACTIVE", null);
 
-  // generate token and return it
-  const token = await generateToken("access", {
-    email,
+  // generate access, refresh token and return it
+  const { accessToken, refreshToken } = await generateTokens({
     id: user.id,
+    email: user.email,
     role: user.role,
   });
 
-  res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
-  console.log(token);
+  res.cookie(COOKIE_NAME, refreshToken, COOKIE_OPTIONS);
+  console.log(accessToken);
 
   return sendSuccess(res, "Logged in successfull", {
     user: publicUser(user),
-    token,
+    token: accessToken,
   });
 });
 
