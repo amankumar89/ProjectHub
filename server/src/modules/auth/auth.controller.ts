@@ -15,8 +15,10 @@ import {
 } from "../../utils/helper";
 import { generateTokens } from "../../utils/jwt";
 import {
+  sendBadRequest,
   sendConflict,
   sendCreated,
+  sendInternalError,
   sendNotAuthorized,
   sendNotFound,
   sendSuccess,
@@ -76,7 +78,14 @@ const login = asyncHandler(async (req: Request, res: Response) => {
     role: user.role,
   });
 
-  await updateUser(user.id, { lastLogin: new Date(), refreshToken });
+  const hashedRefreshToken = await hashedPassword(refreshToken, 12);
+
+  const savedUser = await updateUser(user.id, {
+    lastLogin: new Date(),
+    refreshToken: hashedRefreshToken,
+  });
+
+  if (!savedUser) return sendInternalError(res, "Failed to login.");
 
   res.cookie(COOKIE_NAME, refreshToken, COOKIE_OPTIONS);
   console.log(accessToken);
@@ -99,8 +108,15 @@ const profile = asyncHandler(async (req: Request, res: Response) => {
 
 // logout
 const logout = asyncHandler(async (req: Request, res: Response) => {
+  const userId = Number(req.user!.id);
+  if (isNaN(userId)) return sendBadRequest(res, "Invalid user ID");
+  const user = await updateUser(userId, {
+    refreshToken: null,
+  });
+  if (!user) return sendInternalError(res, "Failed to logout");
+
   // remove token access, refresh both
-  res.clearCookie("token", COOKIE_OPTIONS);
+  res.clearCookie(COOKIE_NAME, COOKIE_OPTIONS);
 
   return sendSuccess(res, "Logout successfully", null);
 });
