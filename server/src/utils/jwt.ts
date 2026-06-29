@@ -29,21 +29,22 @@ export const verifyToken = async (token: string, secret: Secret) => {
   return await jwt.verify(token, secret);
 };
 
-export const generateToken = async (
-  type: "access" | "refresh",
-  payload: {
-    id: number;
-    email: string;
-    role: UserRole;
-  },
-) => {
-  const secret: Secret =
-    type === "access" ? JWT_ACCESS_SECRET! : JWT_REFRESH_SECRET!;
+export const generateTokens = async (payload: JwtPayload) => {
+  const [accessToken, refreshToken] = await Promise.all([
+    signToken(
+      payload,
+      JWT_ACCESS_SECRET!,
+      JWT_ACCESS_EXPIRES_IN! as SignOptions["expiresIn"],
+    ),
+    signToken(
+      payload,
+      JWT_REFRESH_SECRET!,
+      JWT_REFRESH_EXPIRES_IN! as SignOptions["expiresIn"],
+    ),
+  ]);
 
-  const expiresIn =
-    type === "access"
-      ? (JWT_ACCESS_EXPIRES_IN! as SignOptions["expiresIn"])
-      : (JWT_REFRESH_EXPIRES_IN! as SignOptions["expiresIn"]);
-
-  return await signToken(payload, secret, expiresIn);
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
