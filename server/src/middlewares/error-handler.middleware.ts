@@ -29,6 +29,7 @@
 
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import { sendNotAuthorized } from "../utils/response";
 
 // ─── Postgres/Drizzle error codes ────────────────────────────────────────────
 const PG_ERROR_MAP: Record<string, { status: number; message: string }> = {
@@ -106,6 +107,10 @@ export const globalErrorHandler = (
 
     sendError(res, 422, "Validation failed.", fieldErrors);
     return;
+  }
+
+  if (["JsonWebTokenError", "TokenExpiredError"].includes(err.name)) {
+    return sendNotAuthorized(res, "Token expired or invalid");
   }
 
   // 2. Custom AppError
