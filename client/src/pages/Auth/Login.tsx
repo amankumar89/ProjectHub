@@ -1,4 +1,4 @@
-import React, { useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../../hooks/useAuth";

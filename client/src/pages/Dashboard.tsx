@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
@@ -101,7 +100,7 @@ const Dashboard: React.FC = () => {
 export default Dashboard;
 
 const Wrapper = styled.div.attrs({
-  className: "min-h-screen p-6 md:p-10",
+  className: "min-h-screen",
 })``;
 
 const SectionLabel = styled.p.attrs({

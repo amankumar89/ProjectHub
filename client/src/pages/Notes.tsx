@@ -1,15 +1,27 @@
-import React from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import BackButton from "@/components/BackButton";
+
+const Notes: React.FC = () => {
+  return (
+    <Wrapper>
+      <Header>
+        <Title>Notes</Title>
+      </Header>
+      <Card>
+        <Empty>Notes will appear here.</Empty>
+      </Card>
+      <BackButton />
+    </Wrapper>
+  );
+};
+
+export default Notes;
 
 const Wrapper = styled.div.attrs({
-  className: "min-h-screen bg-gray-50 p-8",
+  className: "min-h-screen bg-gray-50",
 })``;
 const Header = styled.div.attrs({
   className: "flex items-center gap-3 mb-8",
-})``;
-const Back = styled.button.attrs({
-  className: "text-sm text-gray-400 hover:text-gray-600 transition-colors",
 })``;
 const Title = styled.h1.attrs({
   className: "text-3xl font-bold text-gray-800",
@@ -18,21 +30,3 @@ const Card = styled.div.attrs({
   className: "bg-white rounded-2xl shadow-sm border border-gray-100 p-6",
 })``;
 const Empty = styled.p.attrs({ className: "text-gray-400 text-sm" })``;
-
-const Notes: React.FC = () => {
-  const navigate = useNavigate();
-
-  return (
-    <Wrapper>
-      <Header>
-        <Back onClick={() => navigate("/dashboard")}>← Back</Back>
-        <Title>Notes</Title>
-      </Header>
-      <Card>
-        <Empty>Notes will appear here.</Empty>
-      </Card>
-    </Wrapper>
-  );
-};
-
-export default Notes;

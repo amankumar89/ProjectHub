@@ -1,12 +1,11 @@
-import React from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+// import { useNavigate } from "react-router-dom";
+// import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
-  ArrowLeft,
+  // ArrowLeft,
   User,
   Mail,
   ShieldCheck,
@@ -16,6 +15,8 @@ import {
   CircleDot,
 } from "lucide-react";
 import { useGetUserById } from "@/hooks/useUsers";
+import Loader from "@/components/Loader";
+import BackButton from "@/components/BackButton";
 
 const formatDate = (iso?: string | null): string => {
   if (!iso) return "—";
@@ -47,9 +48,11 @@ const STATUS_DOT: Record<Status, string> = {
 };
 
 const ProfilePage: React.FC = () => {
-  const { user: userData } = useAuthStore() as { user: User | null };
-  const { data: user } = useGetUserById(userData!.id!);
-  const navigate = useNavigate();
+  const { user: userData, isHydrated } = useAuthStore();
+  const { data: user, isLoading } = useGetUserById(userData!.id!);
+  // const navigate = useNavigate();
+
+  if (!isHydrated || isLoading) return <Loader />;
 
   if (!user) {
     return (
@@ -70,7 +73,7 @@ const ProfilePage: React.FC = () => {
     <Wrapper>
       {/* ── Back + Heading ── */}
       <BackRow>
-        <Button
+        {/* <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate(-1)}
@@ -78,7 +81,7 @@ const ProfilePage: React.FC = () => {
         >
           <ArrowLeft size={15} />
           Back
-        </Button>
+        </Button> */}
         <PageTitle>My Profile</PageTitle>
         <PageSub>View your account details and activity</PageSub>
       </BackRow>
@@ -190,6 +193,7 @@ const ProfilePage: React.FC = () => {
           </MetaGrid>
         </CardBody>
       </ProfileCard>
+      <BackButton />
     </Wrapper>
   );
 };
@@ -197,7 +201,7 @@ const ProfilePage: React.FC = () => {
 export default ProfilePage;
 
 const Wrapper = styled.div.attrs({
-  className: "w-full min-h-screen bg-[#F7F8FC] p-6 md:p-10",
+  className: "w-full min-h-screen bg-[#F7F8FC]",
 })``;
 
 const BackRow = styled.div.attrs({

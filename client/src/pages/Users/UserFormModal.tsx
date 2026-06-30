@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import {
@@ -194,13 +194,13 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, onClose, id }) => {
                     type="password"
                     placeholder={isEdit ? "••••••••" : "Min. 8 characters"}
                     className="rounded-xl border-gray-200 focus:border-indigo-400 focus:ring-indigo-100"
-                    {...register("password", {
-                      required: isEdit ? false : "Password is required",
-                      minLength: {
-                        value: 8,
-                        message: "Minimum 8 characters",
-                      },
-                    })}
+                    // {...register("password", {
+                    //   required: isEdit ? false : "Password is required",
+                    //   minLength: {
+                    //     value: 4,
+                    //     message: "Minimum 4 characters",
+                    //   },
+                    // })}
                   />
                   {errors.password && (
                     <FieldError>{errors.password.message}</FieldError>

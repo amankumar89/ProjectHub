@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +23,6 @@ import {
   Search,
   Pencil,
   Trash2,
-  ArrowLeft,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
@@ -45,24 +43,10 @@ import {
   STATUS_DOT,
   ROLE_OPTIONS,
   STATUS_OPTIONS,
+  getInitials,
+  formatDate,
 } from "@/utils/helper";
-
-const formatDate = (iso?: string | null): string => {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-};
-
-const getInitials = (name: string) =>
-  name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+import BackButton from "@/components/BackButton";
 
 const AVATAR_BG: Record<Role, string> = {
   ADMIN: "bg-violet-100 text-violet-700",
@@ -82,8 +66,6 @@ const DEFAULT_FILTERS: UserFilters = {
 };
 
 const UsersPage: React.FC = () => {
-  const navigate = useNavigate();
-
   const [filters, setFilters] = useState<UserFilters>(DEFAULT_FILTERS);
   const [searchInput, setSearchInput] = useState("");
 
@@ -100,7 +82,7 @@ const UsersPage: React.FC = () => {
   const totalPages = Math.ceil(total / filters.limit);
 
   const updateFilter = useCallback(
-    <K extends keyof UserFilters>(key: K, value: UserFilters[K]) => {
+    <K extends keyof UserFilters>(key: K, value: UserFilters[K] | "") => {
       setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
     },
     [],
@@ -160,15 +142,6 @@ const UsersPage: React.FC = () => {
     <Wrapper>
       <Header>
         <TitleBlock>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-gray-500 hover:text-gray-800 mb-2 -ml-2 w-fit"
-          >
-            <ArrowLeft size={14} />
-            Back
-          </Button>
           <PageTitle>Users</PageTitle>
           <PageSub>
             {total > 0 ? `${total} users found` : "Manage all users"}
@@ -202,35 +175,32 @@ const UsersPage: React.FC = () => {
           <FilterGroup>
             <Select
               value={filters.role ?? ""}
-              onValueChange={(val) =>
-                updateFilter("role", val === "ALL" ? "" : (val as Role))
-              }
+              onValueChange={(val) => updateFilter("role", val as Role)}
             >
               <SelectTrigger className="w-36 rounded-xl border-gray-200 text-sm">
                 <SelectValue placeholder="All Roles" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
-                <SelectItem value="ALL">All Roles</SelectItem>
-                {ROLE_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
+                {[{ label: "All Roles", value: "" }, ...ROLE_OPTIONS].map(
+                  (o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ),
+                )}
               </SelectContent>
             </Select>
 
             {/* Status Filter */}
             <Select
               value={filters.status ?? ""}
-              onValueChange={(val) =>
-                updateFilter("status", val === "ALL" ? "" : (val as Status))
-              }
+              onValueChange={(val) => updateFilter("status", val as Status)}
             >
               <SelectTrigger className="w-36 rounded-xl border-gray-200 text-sm">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
-                <SelectItem value="ALL">All Statuses</SelectItem>
+                <SelectItem value="">All Statuses</SelectItem>
                 {STATUS_OPTIONS.map((o) => (
                   <SelectItem key={o.value} value={o.value}>
                     {o.label}
@@ -503,6 +473,7 @@ const UsersPage: React.FC = () => {
         isLoading={isDeleting}
         userName={deleteTarget?.name}
       />
+      <BackButton />
     </Wrapper>
   );
 };
@@ -510,7 +481,7 @@ const UsersPage: React.FC = () => {
 export default UsersPage;
 
 const Wrapper = styled.div.attrs({
-  className: "min-h-screen bg-[#F7F8FC] p-6 md:p-10",
+  className: "min-h-screen bg-[#F7F8FC]",
 })``;
 
 const Header = styled.div.attrs({

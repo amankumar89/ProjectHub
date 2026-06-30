@@ -36,13 +36,6 @@ const App: React.FC = () => {
             </PublicRoute>
           }
         />
-
-        {/*
-          Protected — nested under a single Layout parent route. Layout
-          renders Navbar once and an <Outlet /> for whichever child route
-          matched, so every page below gets the Navbar + consistent
-          background without importing either itself.
-        */}
         <Route element={<Layout />}>
           <Route
             path="/dashboard"
