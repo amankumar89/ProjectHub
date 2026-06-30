@@ -84,24 +84,44 @@ const getUserById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const updateUserById = asyncHandler(async (req: Request, res: Response) => {
-  const userId = Number(req.params.id) as any;
+  const targetUserId = Number(req.params.id) as any;
+  if (isNaN(targetUserId)) return sendBadRequest(res, "Invalid user ID");
 
-  if (isNaN(userId)) return sendBadRequest(res, "Invalid user ID");
+  const authUser = req.user;
 
-  if (req.user?.role !== "ADMIN" && userId !== Number(req.user?.id)) {
-    return sendForbidden(res);
+  const payload: Partial<{
+    name: string;
+    email: string;
+    role: UserRole;
+    status: UserStatus;
+    password: string;
+  }> = req.body;
+
+  const isAdmin = authUser?.role === "ADMIN";
+  const isSelf = authUser?.id === targetUserId;
+
+  if (!isAdmin && !isSelf) {
+    return sendForbidden(res, "Forbidden");
   }
 
-  const tempUser = req.body;
-
-  if (req.body.password) {
-    tempUser.password = await hashPassword(tempUser.password);
+  if (!isAdmin) {
+    delete payload.role;
+    delete payload.status;
   }
 
-  if (!tempUser || Object.keys(tempUser).length === 0)
+  if (isAdmin && isSelf) {
+    delete payload.role;
+    delete payload.status;
+  }
+
+  if (Object.keys(payload).length === 0)
     return sendBadRequest(res, "Request body cannot be empty.");
 
-  const updatedUser = await updateUser(userId, tempUser);
+  if (payload.password) {
+    payload.password = await hashPassword(payload.password);
+  }
+
+  const updatedUser = await updateUser(targetUserId, payload);
 
   if (!updatedUser) return sendNotFound(res, "User not found");
 
