@@ -2,6 +2,7 @@ import { useState, type ChangeEvent } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 interface LoginForm {
   email: string;
@@ -16,7 +17,13 @@ const Login: React.FC = () => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (): void => mutate(form);
+  const handleSubmit = (): void => {
+    if (!form.email?.trim() || !form.password?.trim()) {
+      toast.error("Please fill required fields");
+      return;
+    }
+    mutate(form);
+  };
 
   return (
     <Page>
