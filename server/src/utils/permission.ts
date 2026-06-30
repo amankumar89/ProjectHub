@@ -1,7 +1,6 @@
 import type { UserRole } from "../db/schema";
 
 const SELF_EDITABLE_FIELDS = ["name", "email", "password"] as const;
-
 const ADMIN_OTHER_FIELDS = [
   "name",
   "email",
@@ -9,8 +8,8 @@ const ADMIN_OTHER_FIELDS = [
   "role",
   "status",
 ] as const;
-
 const TEACHER_STUDENT_FIELDS = ["name", "email", "password"] as const;
+const ADMIN_ON_ADMIN_FIELDS = ["name", "email", "password"] as const;
 
 type AllowedFieldsResult =
   | { allowed: true; fields: readonly string[] }
@@ -23,6 +22,10 @@ export default function getAllowedFields(
 ): AllowedFieldsResult {
   if (isSelf) {
     return { allowed: true, fields: SELF_EDITABLE_FIELDS };
+  }
+
+  if (requesterRole === "ADMIN" && targetRole === "ADMIN") {
+    return { allowed: true, fields: ADMIN_ON_ADMIN_FIELDS };
   }
 
   if (requesterRole === "ADMIN") {
