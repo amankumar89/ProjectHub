@@ -27,8 +27,14 @@
 //   internalError(res);
 // };
 
-import type { NextFunction, Request, Response } from "express";
+import type {
+  ErrorRequestHandler,
+  NextFunction,
+  Request,
+  Response,
+} from "express";
 import { ZodError } from "zod";
+import { sendNotAuthorized } from "../utils/response";
 
 // ─── Postgres/Drizzle error codes ────────────────────────────────────────────
 const PG_ERROR_MAP: Record<string, { status: number; message: string }> = {
@@ -92,7 +98,7 @@ function sendError(
 
 // ─── Global error handler ─────────────────────────────────────────────────────
 export const globalErrorHandler = (
-  err: unknown,
+  err: ErrorRequestHandler,
   _req: Request,
   res: Response,
   _next: NextFunction,
@@ -104,8 +110,17 @@ export const globalErrorHandler = (
       message: e.message,
     }));
 
-    sendError(res, 422, "Validation failed.", fieldErrors);
+    sendError(
+      res,
+      422,
+      err?.issues?.[0].message ?? "Validation failed.",
+      fieldErrors,
+    );
     return;
+  }
+
+  if (["JsonWebTokenError", "TokenExpiredError"].includes(err?.name)) {
+    return sendNotAuthorized(res, "Token expired or invalid");
   }
 
   // 2. Custom AppError

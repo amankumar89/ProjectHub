@@ -5,6 +5,7 @@ import {
   pgEnum,
   serial,
   varchar,
+  text,
 } from "drizzle-orm/pg-core";
 
 export const roles = ["USER", "ADMIN", "TEACHER", "STUDENT"] as const;
@@ -27,20 +28,20 @@ export const users = pgTable("users", {
   password: varchar("password", { length: 255 }).notNull(),
   role: userRoleEnum("role").default("USER").notNull(),
   status: userStatusEnum("status").default("ACTIVE").notNull(),
-  lastLogin: timestamp("last_login", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true })
+  lastLogin: timestamp("last_login", { withTimezone: true, mode: "date" }),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
     .defaultNow()
     .notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at", {
+    withTimezone: true,
+    mode: "date",
+  })
     .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
+    .$onUpdate(() => new Date())
     .notNull(),
-  deletedAt: timestamp("deleted_at"), // for soft delete
-  refreshToken: varchar("refresh_token"),
+  deletedAt: timestamp("deleted_at", { withTimezone: true, mode: "date" }), // for soft delete
+  refreshToken: text("refresh_token"),
 });
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
-export type UpdateUser = Partial<
-  Pick<User, "name" | "email" | "password" | "role" | "status" | "lastLogin">
->;

@@ -37,7 +37,7 @@ import {
 import { useGetUsers, useDeleteUser } from "@/hooks/useUsers";
 
 import UserFormModal from "./UserFormModal";
-import DeleteConfirmDialog from "@/pages/Userssssss/DeleteConfirmDialog";
+import DeleteConfirmDialog from "@/pages/Users/DeleteConfirmDialog";
 
 import {
   ROLE_STYLE,

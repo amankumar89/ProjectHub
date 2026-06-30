@@ -84,10 +84,14 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, onClose, id }) => {
 
   // ── Submit ──
   const onSubmit = (data: UserFormData) => {
+    const payload: UserFormData = {
+      ...data,
+      password: data.password === "" ? undefined : data.password,
+    };
     if (isEdit) {
-      updateUser({ id, ...data }, { onSuccess: onClose });
+      updateUser({ id, ...payload }, { onSuccess: onClose });
     } else {
-      createUser(data, { onSuccess: onClose });
+      createUser(payload, { onSuccess: onClose });
     }
   };
 

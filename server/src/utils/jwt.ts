@@ -1,5 +1,5 @@
 import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
-import type { NewUser, UserRole } from "../db/schema";
+import type { UserRole, UserStatus } from "../db/schema";
 import {
   JWT_ACCESS_EXPIRES_IN,
   JWT_ACCESS_SECRET,
@@ -11,6 +11,7 @@ export interface JwtPayload {
   id: number;
   email: string;
   role: UserRole;
+  status?: UserStatus;
 }
 
 const signToken = (
@@ -25,25 +26,26 @@ const signToken = (
   });
 };
 
-export const verifyToken = async (token: string, secret: Secret) => {
-  return await jwt.verify(token, secret);
+export const verifyToken = (token: string, secret: Secret) => {
+  return jwt.verify(token, secret);
 };
 
-export const generateToken = async (
-  type: "access" | "refresh",
-  payload: {
-    id: number;
-    email: string;
-    role: UserRole;
-  },
-) => {
-  const secret: Secret =
-    type === "access" ? JWT_ACCESS_SECRET! : JWT_REFRESH_SECRET!;
+export const generateTokens = async (payload: JwtPayload) => {
+  const [accessToken, refreshToken] = await Promise.all([
+    signToken(
+      payload,
+      JWT_ACCESS_SECRET!,
+      JWT_ACCESS_EXPIRES_IN! as SignOptions["expiresIn"],
+    ),
+    signToken(
+      payload,
+      JWT_REFRESH_SECRET!,
+      JWT_REFRESH_EXPIRES_IN! as SignOptions["expiresIn"],
+    ),
+  ]);
 
-  const expiresIn =
-    type === "access"
-      ? (JWT_ACCESS_EXPIRES_IN! as SignOptions["expiresIn"])
-      : (JWT_REFRESH_EXPIRES_IN! as SignOptions["expiresIn"]);
-
-  return await signToken(payload, secret, expiresIn);
+  return {
+    accessToken,
+    refreshToken,
+  };
 };

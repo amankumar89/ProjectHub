@@ -32,3 +32,48 @@ export const STATUS_OPTIONS: { label: string; value: Status }[] = [
   { label: "Blocked", value: "BLOCKED" },
   { label: "Deleted", value: "DELETED" },
 ];
+
+export const ROLE_ACCENT: Record<
+  Role,
+  { text: string; bg: string; dot: string; hex: string }
+> = {
+  ADMIN: {
+    text: "text-violet-700",
+    bg: "bg-violet-100",
+    dot: "bg-violet-500",
+    hex: "#8b5cf6",
+  },
+  TEACHER: {
+    text: "text-sky-700",
+    bg: "bg-sky-100",
+    dot: "bg-sky-500",
+    hex: "#0ea5e9",
+  },
+  STUDENT: {
+    text: "text-emerald-700",
+    bg: "bg-emerald-100",
+    dot: "bg-emerald-500",
+    hex: "#10b981",
+  },
+  USER: {
+    text: "text-slate-700",
+    bg: "bg-slate-100",
+    dot: "bg-slate-400",
+    hex: "#94a3b8",
+  },
+};
+
+export const ROLE_LABEL: Record<Role, string> = {
+  ADMIN: "Admin",
+  TEACHER: "Teacher",
+  STUDENT: "Student",
+  USER: "User",
+};
+
+export const getInitials = (str: string) =>
+  str
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);

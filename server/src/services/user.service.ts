@@ -2,7 +2,6 @@ import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import {
   users,
   type NewUser,
-  type UpdateUser,
   type User,
   type UserRole,
   type UserStatus,
@@ -10,8 +9,11 @@ import {
 import { db } from "../db";
 import { profileUser } from "../utils/helper";
 
-export const findUserByEmail = async (email: string) => {
-  return await db.select().from(users).where(eq(users.email, email)).limit(1);
+export const findUserByEmail = (email: string) => {
+  // return await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.email, email),
+  });
 };
 
 export const createUser = async (data: NewUser) => {
@@ -19,7 +21,10 @@ export const createUser = async (data: NewUser) => {
 };
 
 export const findUserById = async (id: number) => {
-  return await db.select().from(users).where(eq(users.id, id)).limit(1);
+  // return await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.id, id),
+  });
 };
 
 export const findAllUsers = async (
@@ -93,14 +98,11 @@ export const findAllUsers = async (
 
 export const updateUser = async (
   id: number,
-  payload: UpdateUser,
+  payload: Partial<User>,
 ): Promise<User | null> => {
   const [updatedUser] = await db
     .update(users)
-    .set({
-      ...payload,
-      updatedAt: new Date(),
-    })
+    .set(payload)
     .where(eq(users.id, id))
     .returning();
   return updatedUser;
@@ -110,7 +112,7 @@ export const deleteUser = async (id: number): Promise<User | null> => {
   const [deletedUser] = await db
     .update(users)
     .set({
-      updatedAt: new Date(),
+      refreshToken: null,
       deletedAt: new Date(),
       status: "DELETED",
     })

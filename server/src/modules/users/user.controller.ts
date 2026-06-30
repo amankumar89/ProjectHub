@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
-import { asyncHandler } from "../../utils/helper";
+import { asyncHandler, hashPassword, publicUser } from "../../utils/helper";
 import {
   deleteUser,
   findAllUsers,
   findUserById,
   updateUser,
+  createUser as saveUser,
 } from "../../services/user.service";
 import {
   userRoleEnum,
@@ -16,9 +17,25 @@ import {
 import { profileUser } from "../../utils/helper";
 import {
   sendBadRequest,
+  sendCreated,
+  sendForbidden,
+  sendInternalError,
   sendNotFound,
   sendSuccess,
 } from "../../utils/response";
+
+const createUser = asyncHandler(async (req: Request, res: Response) => {
+  const tempUser: User = req.body;
+  if (tempUser.password) {
+    tempUser.password = await hashPassword(tempUser.password);
+  }
+
+  const [user] = await saveUser(tempUser);
+
+  if (!user) return sendInternalError(res, "Failed to create user");
+
+  return sendCreated(res, "User created", publicUser(user));
+});
 
 const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   let {
@@ -61,23 +78,34 @@ const getUserById = asyncHandler(async (req: Request, res: Response) => {
   let tempId = Number(
     req.user?.role === "ADMIN" ? req.params.id : req.user?.id,
   );
-  const [user] = await findUserById(tempId);
+  const user = await findUserById(tempId);
   if (!user) return sendNotFound(res, "User not Found");
   return sendSuccess(res, "User fetched successfully", profileUser(user));
 });
 
 const updateUserById = asyncHandler(async (req: Request, res: Response) => {
   const userId = Number(req.params.id) as any;
+
   if (isNaN(userId)) return sendBadRequest(res, "Invalid user ID");
 
-  if (!req?.body || Object.keys(req?.body).length === 0)
+  if (req.user?.role !== "ADMIN" && userId !== Number(req.user?.id)) {
+    return sendForbidden(res);
+  }
+
+  const tempUser = req.body;
+
+  if (req.body.password) {
+    tempUser.password = await hashPassword(tempUser.password);
+  }
+
+  if (!tempUser || Object.keys(tempUser).length === 0)
     return sendBadRequest(res, "Request body cannot be empty.");
 
-  const updatedUser = await updateUser(userId, req.body);
+  const updatedUser = await updateUser(userId, tempUser);
 
-  if (!updateUser) return sendNotFound(res, "User not found");
+  if (!updatedUser) return sendNotFound(res, "User not found");
 
-  return sendSuccess(res, "User updated successfully", updatedUser);
+  return sendSuccess(res, "User updated successfully", publicUser(updatedUser));
 });
 
 const deleteUserById = asyncHandler(async (req: Request, res: Response) => {
@@ -93,6 +121,7 @@ const deleteUserById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const usersController = {
+  createUser,
   getAllUsers,
   getUserById,
   updateUserById,

@@ -10,6 +10,6 @@ authRoutes.post("/register", validate(registerSchema), authController.register);
 authRoutes.post("/login", validate(loginSchema), authController.login);
 authRoutes.get("/me", authenticate, authController.profile);
 authRoutes.get("/logout", authenticate, authController.logout);
-authRoutes.get("/refresh-token", () => {});
+authRoutes.get("/refresh", authController.refreshToken);
 
 export default authRoutes;

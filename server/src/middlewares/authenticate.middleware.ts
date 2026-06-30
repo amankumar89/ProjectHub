@@ -4,7 +4,8 @@ import { verifyToken, type JwtPayload } from "../utils/jwt";
 import { JWT_ACCESS_SECRET } from "../config/env";
 import { asyncHandler } from "../utils/helper";
 import type { UserRole } from "../db/schema";
-import { sendNotAuthorized } from "../utils/response";
+import { sendForbidden, sendNotAuthorized } from "../utils/response";
+import { findUserById } from "../services/user.service";
 
 export interface AuthRequest extends Request {
   user?: JwtPayload;
@@ -19,24 +20,32 @@ export const authenticate = asyncHandler(
 
     if (!token) return sendNotAuthorized(res, "Unauthorized");
 
-    const decoded = (await verifyToken(
+    const decoded = verifyToken(
       token,
       JWT_ACCESS_SECRET as Secret,
-    )) as JwtPayload;
+    ) as JwtPayload;
 
     if (!decoded) return sendNotAuthorized(res, "Unauthorized: Token Expired");
 
-    req.user = decoded;
+    const tempUser = await findUserById(decoded.id);
 
+    if (!tempUser?.id) return sendNotAuthorized(res, "Unauthorized");
+
+    req.user = decoded;
+    req.user.status = tempUser.status;
     next();
   },
 );
 
 export const authorize = (allowedRoles: UserRole[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user || !allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Forbidden" });
+    if (!req.user) return sendNotAuthorized(res, "Unauthorized");
+
+    if (req.user.status !== "ACTIVE") {
+      return sendForbidden(res, `Account is ${req.user.status}`);
     }
+
+    if (!allowedRoles.includes(req.user.role)) return sendForbidden(res);
     next();
   };
 };

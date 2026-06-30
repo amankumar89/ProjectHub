@@ -27,16 +27,7 @@ export const useLogin = () => {
 
       if (!user) return;
 
-      setAuth(
-        {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          status: user.status,
-        },
-        token,
-      );
+      setAuth(user, token);
       navigate("/dashboard");
     },
 

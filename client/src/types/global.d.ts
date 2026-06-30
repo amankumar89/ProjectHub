@@ -10,6 +10,7 @@ interface User {
   lastLogin?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  avatarUrl?: string;
 }
 
 interface LoginPayload {
