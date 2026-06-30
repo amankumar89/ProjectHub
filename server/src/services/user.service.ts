@@ -9,8 +9,11 @@ import {
 import { db } from "../db";
 import { profileUser } from "../utils/helper";
 
-export const findUserByEmail = async (email: string) => {
-  return await db.select().from(users).where(eq(users.email, email)).limit(1);
+export const findUserByEmail = (email: string) => {
+  // return await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.email, email),
+  });
 };
 
 export const createUser = async (data: NewUser) => {
@@ -18,7 +21,10 @@ export const createUser = async (data: NewUser) => {
 };
 
 export const findUserById = async (id: number) => {
-  return await db.select().from(users).where(eq(users.id, id)).limit(1);
+  // return await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.id, id),
+  });
 };
 
 export const findAllUsers = async (

@@ -1,5 +1,5 @@
 import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
-import type { NewUser, UserRole } from "../db/schema";
+import type { UserRole, UserStatus } from "../db/schema";
 import {
   JWT_ACCESS_EXPIRES_IN,
   JWT_ACCESS_SECRET,
@@ -11,6 +11,7 @@ export interface JwtPayload {
   id: number;
   email: string;
   role: UserRole;
+  status?: UserStatus;
 }
 
 const signToken = (
@@ -25,8 +26,8 @@ const signToken = (
   });
 };
 
-export const verifyToken = async (token: string, secret: Secret) => {
-  return await jwt.verify(token, secret);
+export const verifyToken = (token: string, secret: Secret) => {
+  return jwt.verify(token, secret);
 };
 
 export const generateTokens = async (payload: JwtPayload) => {
