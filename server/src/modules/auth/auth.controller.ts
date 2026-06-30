@@ -60,19 +60,15 @@ const register = asyncHandler(async (req: Request, res: Response) => {
 
 // login
 const login = asyncHandler(async (req: Request, res: Response) => {
-  const start = performance.now();
   const { email, password } = req.body;
   // check user exists or not, if not return error 401
-  const t1 = performance.now();
   const user = await findUserByEmail(email);
-  console.log("find user: ", ((performance.now() - t1) / 1000).toFixed(3));
 
   if (!user) return sendNotAuthorized(res, "Invalid username or password");
 
   // verify password if not correct return error 401
-  const t2 = performance.now();
   const passwordValid = await comparePassword(user.password, password);
-  console.log("compare pass: ", ((performance.now() - t2) / 1000).toFixed(3));
+
   if (!passwordValid)
     return sendNotAuthorized(res, "Invalid username or password");
 
@@ -80,30 +76,26 @@ const login = asyncHandler(async (req: Request, res: Response) => {
 
   if (user.status !== "ACTIVE") return sendSuccess(res, "User is not ACTIVE");
 
-  const t3 = performance.now();
   // generate access, refresh token and return it
   const { accessToken, refreshToken } = await generateTokens({
     id: user.id,
     email: user.email,
     role: user.role,
   });
-  console.log("generate token: ", ((performance.now() - t3) / 1000).toFixed(3));
 
-  const t4 = performance.now();
+  // hash refresh token before saving into db
   const hashRefreshToken = hashToken(refreshToken);
-  console.log("hashed token: ", ((performance.now() - t4) / 1000).toFixed(3));
 
-  const t5 = performance.now();
+  // save user with refresh token and last login
   const savedUser = await updateUser(user.id, {
     lastLogin: new Date(),
     refreshToken: hashRefreshToken,
   });
-  console.log("save user: ", ((performance.now() - t5) / 1000).toFixed(3));
+
   if (!savedUser) return sendInternalError(res, "Failed to login.");
 
   res.cookie(COOKIE_NAME, refreshToken, COOKIE_OPTIONS);
   console.log(accessToken);
-  console.log("total: ", ((performance.now() - start) / 1000).toFixed(3));
 
   return sendSuccess(res, "Logged in successfull", {
     user: publicUser(user),
@@ -171,7 +163,16 @@ const refreshToken = asyncHandler(async (req: Request, res: Response) => {
     role: user.role,
   });
 
+  // save user with refresh token and last login
+  const savedUser = await updateUser(user.id, {
+    lastLogin: new Date(),
+    refreshToken: hashToken(refreshToken),
+  });
+
+  if (!savedUser) return sendInternalError(res, "Failed to get refresh token.");
+
   res.cookie(COOKIE_NAME, refreshToken, COOKIE_OPTIONS);
+
   return sendSuccess(res, "Token Refreshed", {
     token: accessToken,
   });

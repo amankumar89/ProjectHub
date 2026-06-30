@@ -7,7 +7,6 @@ import {
   CheckSquare,
   GraduationCap,
   FileText,
-  User,
   ArrowRight,
 } from "lucide-react";
 
@@ -46,20 +45,20 @@ const ALL_CARDS: Record<string, CardItem> = {
     accent: "text-amber-600",
     bgAccent: "bg-amber-50 group-hover:bg-amber-100",
   },
-  profile: {
-    icon: <User size={ICON_SIZE} />,
-    title: "Profile",
-    desc: "View your profile",
-    path: "/profile",
-    accent: "text-rose-600",
-    bgAccent: "bg-rose-50 group-hover:bg-rose-100",
-  },
+  // profile: {
+  //   icon: <User size={ICON_SIZE} />,
+  //   title: "Profile",
+  //   desc: "View your profile",
+  //   path: "/profile",
+  //   accent: "text-rose-600",
+  //   bgAccent: "bg-rose-50 group-hover:bg-rose-100",
+  // },
 };
 
 const ROLE_CARDS: Record<string, string[]> = {
   ADMIN: ["users", "tasks", "students", "notes"],
   TEACHER: ["students", "tasks", "notes"],
-  STUDENT: ["tasks", "notes", "profile"],
+  STUDENT: ["tasks", "notes"],
 };
 
 const getCards = (role: string): CardItem[] =>
