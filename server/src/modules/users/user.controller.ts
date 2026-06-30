@@ -26,11 +26,11 @@ import {
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
   const tempUser: User = req.body;
-  if (tempUser.password) {
-    tempUser.password = await hashPassword(tempUser.password);
-  }
 
-  const [user] = await saveUser(tempUser);
+  const [user] = await saveUser({
+    ...tempUser,
+    password: await hashPassword(tempUser.password ?? "admin"),
+  });
 
   if (!user) return sendInternalError(res, "Failed to create user");
 
