@@ -23,6 +23,7 @@ import {
   sendNotFound,
   sendSuccess,
 } from "../../utils/response";
+import getAllowedFields from "../../utils/permission";
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
   const tempUser: User = req.body;
@@ -84,7 +85,7 @@ const getUserById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const updateUserById = asyncHandler(async (req: Request, res: Response) => {
-  const targetUserId = Number(req.params.id) as any;
+  const targetUserId = Number(req.params.id);
   if (isNaN(targetUserId)) return sendBadRequest(res, "Invalid user ID");
 
   const authUser = req.user;
@@ -97,30 +98,39 @@ const updateUserById = asyncHandler(async (req: Request, res: Response) => {
     password: string;
   }> = req.body;
 
-  const isAdmin = authUser?.role === "ADMIN";
+  // const isAdmin = authUser?.role === "ADMIN";
   const isSelf = authUser?.id === targetUserId;
 
-  if (!isAdmin && !isSelf) {
-    return sendForbidden(res, "Forbidden");
+  const targetUser = await findUserById(targetUserId);
+
+  if (!targetUser) return sendNotFound(res, "User not found");
+
+  const permissions = getAllowedFields(
+    isSelf,
+    authUser?.role!,
+    targetUser.role,
+  );
+
+  if (!permissions.allowed) return sendForbidden(res, permissions.reason);
+
+  // Hard reject: any field in payload not in the allowed set
+  const disallowedFields = Object.keys(payload).filter(
+    (key) => !permissions.fields.includes(key),
+  );
+
+  if (disallowedFields.length > 0) {
+    return sendForbidden(
+      res,
+      `Not allowed to update: ${disallowedFields.join(", ")}`,
+    );
   }
 
-  if (!isAdmin) {
-    delete payload.role;
-    delete payload.status;
-  }
-
-  if (isAdmin && isSelf) {
-    delete payload.role;
-    delete payload.status;
-  }
-
-  if (Object.keys(payload).length === 0)
-    return sendBadRequest(res, "Request body cannot be empty.");
-
+  // before save hash password
   if (payload.password) {
     payload.password = await hashPassword(payload.password);
   }
 
+  // update user in db
   const updatedUser = await updateUser(targetUserId, payload);
 
   if (!updatedUser) return sendNotFound(res, "User not found");

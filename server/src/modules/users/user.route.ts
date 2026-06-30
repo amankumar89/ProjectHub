@@ -28,11 +28,7 @@ usersRoute.post(
 // update user
 usersRoute.patch(
   "/:id",
-  [
-    validate(updateUserSchema),
-    authenticate,
-    authorize(["ADMIN", "STUDENT", "TEACHER", "USER"]),
-  ],
+  [authenticate, validate(updateUserSchema)],
   usersController.updateUserById,
 );
 
