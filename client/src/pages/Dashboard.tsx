@@ -58,6 +58,7 @@ const ROLE_CARDS: Record<string, string[]> = {
   ADMIN: ["users", "tasks", "students", "notes"],
   TEACHER: ["students", "tasks", "notes"],
   STUDENT: ["tasks", "notes"],
+  USER: ["tasks", "notes"],
 };
 
 const getCards = (role: string): CardItem[] =>
