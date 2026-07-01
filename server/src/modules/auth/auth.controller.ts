@@ -74,7 +74,8 @@ const login = asyncHandler(async (req: Request, res: Response) => {
 
   if (user.status === "DELETED") return sendNotFound(res, "User not found");
 
-  if (user.status !== "ACTIVE") return sendSuccess(res, "User is not ACTIVE");
+  if (user.status !== "ACTIVE")
+    return sendNotAuthorized(res, "User is not ACTIVE");
 
   // generate access, refresh token and return it
   const { accessToken, refreshToken } = await generateTokens({

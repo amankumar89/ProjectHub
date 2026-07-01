@@ -21,11 +21,10 @@ export const useLogin = () => {
         .then((res) => res.data),
 
     onSuccess: (data) => {
-      toast.success(getMsg(data, "Logged in successfully"));
-
       const { user, token } = data.data as UserWithToken;
 
       if (!user) return;
+      toast.success(getMsg(data, "Logged in successfully"));
 
       setAuth(user, token);
       navigate("/dashboard");
