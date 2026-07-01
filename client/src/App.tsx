@@ -12,12 +12,10 @@ import Notes from "./pages/Notes";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import ProfilePage from "./pages/Profile";
-import { useProfile } from "./hooks/useAuth";
 
 const ALL_ROLES = ["ADMIN", "TEACHER", "STUDENT", "USER"] as const;
 
 const App: React.FC = () => {
-  useProfile();
   return (
     <BrowserRouter>
       <Routes>
