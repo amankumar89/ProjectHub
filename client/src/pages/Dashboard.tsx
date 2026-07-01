@@ -20,14 +20,6 @@ const ALL_CARDS: Record<string, CardItem> = {
     accent: "text-violet-600",
     bgAccent: "bg-violet-50 group-hover:bg-violet-100",
   },
-  tasks: {
-    icon: <CheckSquare size={ICON_SIZE} />,
-    title: "Tasks",
-    desc: "Track your tasks",
-    path: "/tasks",
-    accent: "text-emerald-600",
-    bgAccent: "bg-emerald-50 group-hover:bg-emerald-100",
-  },
   students: {
     icon: <GraduationCap size={ICON_SIZE} />,
     title: "Students",
@@ -44,6 +36,14 @@ const ALL_CARDS: Record<string, CardItem> = {
     accent: "text-amber-600",
     bgAccent: "bg-amber-50 group-hover:bg-amber-100",
   },
+  tasks: {
+    icon: <CheckSquare size={ICON_SIZE} />,
+    title: "Tasks",
+    desc: "Track your tasks",
+    path: "/tasks",
+    accent: "text-emerald-600",
+    bgAccent: "bg-emerald-50 group-hover:bg-emerald-100",
+  },
   // profile: {
   //   icon: <User size={ICON_SIZE} />,
   //   title: "Profile",
@@ -53,10 +53,11 @@ const ALL_CARDS: Record<string, CardItem> = {
   //   bgAccent: "bg-rose-50 group-hover:bg-rose-100",
   // },
 };
+console.log(Object.keys(ALL_CARDS));
 
 const ROLE_CARDS: Record<string, string[]> = {
-  ADMIN: ["users", "tasks", "students", "notes"],
-  TEACHER: ["students", "tasks", "notes"],
+  ADMIN: ["users", "students", "notes", "tasks"],
+  TEACHER: ["users", "students", "notes"],
   STUDENT: ["tasks", "notes"],
   USER: ["tasks", "notes"],
 };

@@ -254,7 +254,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, onClose, id }) => {
             </FormGrid>
 
             {/* Footer */}
-            <DialogFooter className="px-6 py-4 bg-gray-50 border-t border-gray-100 mt-4 flex gap-2 justify-end">
+            <DialogFooter className="p-0 my-2 mr-2 bg-gray-50 border-t border-gray-100 flex gap-2 justify-end">
               <Button
                 type="button"
                 variant="outline"
@@ -272,9 +272,9 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, onClose, id }) => {
                 {isLoading ? (
                   <Loader2 size={15} className="animate-spin" />
                 ) : isEdit ? (
-                  "Save Changes"
+                  "Save"
                 ) : (
-                  "Create User"
+                  "Create"
                 )}
               </Button>
             </DialogFooter>
