@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import toast from "react-hot-toast";
@@ -80,5 +80,16 @@ export const useLogout = () => {
         error?.response?.data?.message || "Logout failed. Please try again.";
       toast.error(msg);
     },
+  });
+};
+
+export const useProfile = () => {
+  return useQuery({
+    queryKey: ["profile"],
+    queryFn: async () =>
+      await api.get<ApiResponse<User>>("/auth/me").then((res) => res.data),
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 };
