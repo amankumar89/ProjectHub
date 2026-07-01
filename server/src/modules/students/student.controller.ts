@@ -18,7 +18,7 @@ const deleteStudent = asyncHandler(async (req: Request, res: Response) => {
   return sendSuccess(res, "student delete controller");
 });
 
-const studentController = {
+const studentsController = {
   enrollStudent,
   getAllStudents,
   getStudentById,
@@ -26,4 +26,4 @@ const studentController = {
   deleteStudent,
 };
 
-export default studentController;
+export default studentsController;

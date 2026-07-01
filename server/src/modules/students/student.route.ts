@@ -1,12 +1,12 @@
 import { Router } from "express";
-import studentController from "./student.controller";
+import studentsController from "./student.controller";
 
-const studentRoute = Router();
+const studentsRoute = Router();
 
-studentRoute.post("/", studentController.enrollStudent);
-studentRoute.get("/", studentController.getAllStudents);
-studentRoute.get("/:id", studentController.getStudentById);
-studentRoute.put("/:id", studentController.updateStudent);
-studentRoute.delete("/:id", studentController.deleteStudent);
+studentsRoute.post("/", studentsController.enrollStudent);
+studentsRoute.get("/", studentsController.getAllStudents);
+studentsRoute.get("/:id", studentsController.getStudentById);
+studentsRoute.put("/:id", studentsController.updateStudent);
+studentsRoute.delete("/:id", studentsController.deleteStudent);
 
-export default studentRoute;
+export default studentsRoute;
