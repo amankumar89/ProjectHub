@@ -73,7 +73,7 @@ const Navbar: React.FC = () => {
                   {link.label}
                   {isActive && (
                     <span
-                      className={`absolute inset-x-3 -bottom-[1px] h-0.5 rounded-full ${accent.dot}`}
+                      className={`absolute inset-x-3 -bottom-px h-0.5 rounded-full ${accent.dot}`}
                     />
                   )}
                 </Link>
