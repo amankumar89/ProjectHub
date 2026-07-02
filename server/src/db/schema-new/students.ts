@@ -22,3 +22,6 @@ export const students = pgTable("students", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export type Student = typeof students.$inferSelect;
+export type NewStudent = typeof students.$inferInsert;

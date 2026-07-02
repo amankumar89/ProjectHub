@@ -30,3 +30,6 @@ export const notes = pgTable(
     index("notes_student_idx").on(table.studentId),
   ],
 );
+
+export type Note = typeof notes.$inferSelect;
+export type NewNote = typeof notes.$inferInsert;

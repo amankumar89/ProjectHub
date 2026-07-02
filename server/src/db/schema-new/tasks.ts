@@ -34,3 +34,6 @@ export const tasks = pgTable(
     index("tasks_status_idx").on(table.status),
   ],
 );
+
+export type Task = typeof tasks.$inferSelect;
+export type NewTask = typeof tasks.$inferInsert;

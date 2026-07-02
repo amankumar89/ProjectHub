@@ -24,3 +24,6 @@ export const refreshTokens = pgTable(
   },
   (table) => [index("refresh_tokens_user_idx").on(table.userId)],
 );
+
+export type RefreshToken = typeof refreshTokens.$inferSelect;
+export type NewRefreshToken = typeof refreshTokens.$inferInsert;
