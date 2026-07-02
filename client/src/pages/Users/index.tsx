@@ -102,15 +102,6 @@ const UsersPage: React.FC = () => {
     }));
   };
 
-  const SortIcon = ({ col }: { col: string }) => {
-    if (filters.sortBy !== col) return <ArrowUpDown size={12} />;
-    return filters.order === "asc" ? (
-      <ArrowUp size={12} />
-    ) : (
-      <ArrowDown size={12} />
-    );
-  };
-
   const handleCreate = () => {
     setSelectedId(null);
     setFormOpen(true);
@@ -262,7 +253,12 @@ const UsersPage: React.FC = () => {
                   </TableHead>
                   <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     <SortBtn onClick={() => handleSort("name")}>
-                      User <SortIcon col="name" />
+                      User{" "}
+                      <SortIcon
+                        sortBy={filters.sortBy}
+                        order={filters.order}
+                        col="name"
+                      />
                     </SortBtn>
                   </TableHead>
                   <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
@@ -273,12 +269,22 @@ const UsersPage: React.FC = () => {
                   </TableHead>
                   <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     <SortBtn onClick={() => handleSort("lastLogin")}>
-                      Last Login <SortIcon col="lastLogin" />
+                      Last Login{" "}
+                      <SortIcon
+                        sortBy={filters.sortBy}
+                        order={filters.order}
+                        col="lastLogin"
+                      />
                     </SortBtn>
                   </TableHead>
                   <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     <SortBtn onClick={() => handleSort("createdAt")}>
-                      Joined <SortIcon col="createdAt" />
+                      Joined{" "}
+                      <SortIcon
+                        sortBy={filters.sortBy}
+                        order={filters.order}
+                        col="createdAt"
+                      />
                     </SortBtn>
                   </TableHead>
                   <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">
@@ -479,6 +485,17 @@ const UsersPage: React.FC = () => {
 };
 
 export default UsersPage;
+
+interface SortIconProps {
+  col: string;
+  sortBy?: string;
+  order?: SortOrder;
+}
+
+const SortIcon = ({ col, sortBy, order }: SortIconProps) => {
+  if (sortBy !== col) return <ArrowUpDown size={12} />;
+  return order === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />;
+};
 
 const Wrapper = styled.div.attrs({
   className: "min-h-screen bg-[#F7F8FC]",

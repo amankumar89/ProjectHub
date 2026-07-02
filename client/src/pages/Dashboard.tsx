@@ -53,11 +53,10 @@ const ALL_CARDS: Record<string, CardItem> = {
   //   bgAccent: "bg-rose-50 group-hover:bg-rose-100",
   // },
 };
-console.log(Object.keys(ALL_CARDS));
 
 const ROLE_CARDS: Record<string, string[]> = {
-  ADMIN: ["users", "students", "notes", "tasks"],
-  TEACHER: ["users", "students", "notes"],
+  ADMIN: ["users", "notes", "tasks"],
+  TEACHER: ["students", "notes", "tasks"],
   STUDENT: ["tasks", "notes"],
   USER: ["tasks", "notes"],
 };

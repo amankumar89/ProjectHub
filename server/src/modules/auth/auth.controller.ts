@@ -30,9 +30,9 @@ import type { Secret } from "jsonwebtoken";
 const COOKIE_NAME = "refreshToken";
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  secure: true,
   sameSite: "strict" as const,
-  maxAge: 1 * 24 * 60 * 60 * 1000, // 1 days
+  maxAge: 2 * 24 * 60 * 60 * 1000, // 1 days
 };
 
 // register
