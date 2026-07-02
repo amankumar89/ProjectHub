@@ -135,7 +135,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, onClose, id }) => {
                   </Label>
                   <Input
                     id="name"
-                    placeholder="John Doe"
+                    placeholder="Enter Name"
                     className="rounded-xl border-gray-200 focus:border-indigo-400 focus:ring-indigo-100"
                     {...register("name", { required: "Name is required" })}
                   />
@@ -157,7 +157,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, onClose, id }) => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder="email@example.com"
                     className="rounded-xl border-gray-200 focus:border-indigo-400 focus:ring-indigo-100"
                     {...register("email", {
                       required: "Email is required",

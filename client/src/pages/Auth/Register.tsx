@@ -39,7 +39,7 @@ const Register: React.FC = () => {
         <Label>Name</Label>
         <Input
           name="name"
-          placeholder="John Doe"
+          placeholder="Enter Name"
           value={form.name}
           onChange={handleChange}
         />
@@ -48,7 +48,7 @@ const Register: React.FC = () => {
         <Input
           name="email"
           type="email"
-          placeholder="john@example.com"
+          placeholder="email@example.com"
           value={form.email}
           onChange={handleChange}
         />
