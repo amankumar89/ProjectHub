@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import toast from "react-hot-toast";
@@ -84,12 +84,15 @@ export const useLogout = () => {
 };
 
 export const useProfile = () => {
+  const queryClient = useQueryClient();
+  const cachedData = queryClient.getQueryData(["profile"]);
+
   return useQuery({
     queryKey: ["profile"],
     queryFn: async () =>
-      await api.get<ApiResponse<User>>("/auth/me").then((res) => res.data),
-    staleTime: 0,
-    refetchOnMount: "always",
-    refetchOnWindowFocus: true,
+      await api.get<ApiResponse<User>>("/auth/me").then((res) => res.data.data),
+    enabled: !cachedData,
+    staleTime: 5 * 60 * 1000,
+    refetchIntervalInBackground: true,
   });
 };

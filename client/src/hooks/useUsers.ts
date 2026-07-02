@@ -14,12 +14,18 @@ interface UsersResponse {
 // ─── GET ALL (with filters) ───────────────────────────────────────────────────
 
 export const useGetUsers = (filters: UserFilters) => {
+  const queryClient = useQueryClient();
+
+  const cachedData = queryClient.getQueryData(["users"]);
+
   return useQuery({
     queryKey: ["users", filters],
     queryFn: () =>
       api
         .get<ApiResponse<UsersResponse>>("/users", { params: filters })
         .then((res) => res.data.data),
+    enabled: !cachedData,
+    staleTime: 5 * 60 * 1000,
   });
 };
 

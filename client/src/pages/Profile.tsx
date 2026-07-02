@@ -1,11 +1,8 @@
 import styled from "styled-components";
 import { useAuthStore } from "../store/authStore";
 import { Badge } from "@/components/ui/badge";
-// import { useNavigate } from "react-router-dom";
-// import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
-  // ArrowLeft,
   User,
   Mail,
   ShieldCheck,
@@ -14,9 +11,9 @@ import {
   RefreshCw,
   CircleDot,
 } from "lucide-react";
-import { useGetUserById } from "@/hooks/useUsers";
 import Loader from "@/components/Loader";
 import BackButton from "@/components/BackButton";
+import { useProfile } from "@/hooks/useAuth";
 
 const formatDate = (iso?: string | null): string => {
   if (!iso) return "—";
@@ -48,9 +45,8 @@ const STATUS_DOT: Record<Status, string> = {
 };
 
 const ProfilePage: React.FC = () => {
-  const { user: userData, isHydrated } = useAuthStore();
-  const { data: user, isLoading } = useGetUserById(userData!.id!);
-  // const navigate = useNavigate();
+  const { isHydrated } = useAuthStore();
+  const { data: user, isLoading } = useProfile();
 
   if (!isHydrated || isLoading) return <Loader />;
 

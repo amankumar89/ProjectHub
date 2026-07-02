@@ -16,27 +16,27 @@ const usersRoute = Router();
 usersRoute.get("/", authorize(["ADMIN"]), usersController.getAllUsers);
 
 // get user by id
-usersRoute.get("/:id", authenticate, usersController.getUserById);
+usersRoute.get(
+  "/:id",
+  authorize(["ADMIN", "TEACHER"]),
+  usersController.getUserById,
+);
 
 // create user
 usersRoute.post(
   "/",
-  [authenticate, validate(createUserSchema), authorize(["ADMIN"])],
+  [authorize(["ADMIN"]), validate(createUserSchema)],
   usersController.createUser,
 );
 
 // update user
 usersRoute.patch(
   "/:id",
-  [authenticate, validate(updateUserSchema)],
+  validate(updateUserSchema),
   usersController.updateUserById,
 );
 
 // delete user
-usersRoute.delete(
-  "/:id",
-  [authenticate, authorize(["ADMIN"])],
-  usersController.deleteUserById,
-);
+usersRoute.delete("/:id", authorize(["ADMIN"]), usersController.deleteUserById);
 
 export default usersRoute;
