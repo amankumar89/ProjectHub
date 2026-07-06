@@ -34,8 +34,8 @@ import {
 
 import { useGetUsers, useDeleteUser } from "@/hooks/useUsers";
 
-import UserFormModal from "./UserFormModal";
-import DeleteConfirmDialog from "@/pages/Users/DeleteConfirmDialog";
+import FormModal from "./FormModal";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 
 import {
   ROLE_STYLE,
@@ -459,7 +459,7 @@ const UsersPage: React.FC = () => {
       </Card>
 
       {/* Create / Edit Modal */}
-      <UserFormModal
+      <FormModal
         open={formOpen}
         onClose={() => {
           setFormOpen(false);

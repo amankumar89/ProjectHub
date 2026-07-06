@@ -55,7 +55,7 @@ const ALL_CARDS: Record<string, CardItem> = {
 };
 
 const ROLE_CARDS: Record<string, string[]> = {
-  ADMIN: ["users", "notes", "tasks"],
+  ADMIN: ["users", "students", "notes", "tasks"],
   TEACHER: ["students", "notes", "tasks"],
   STUDENT: ["tasks", "notes"],
   USER: ["tasks", "notes"],

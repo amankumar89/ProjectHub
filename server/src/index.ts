@@ -3,17 +3,17 @@ import cors from "cors";
 import routes from "./routes/index";
 import cookieParser from "cookie-parser";
 import { globalErrorHandler } from "./middlewares/error-handler.middleware";
-import { PORT } from "./config/env";
+import { FRONTEND_URL, PORT } from "./config/env";
 
 const app = express();
 
-app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: FRONTEND_URL,
     credentials: true,
   }),
 );
+app.use(cookieParser());
 app.use(express.json());
 
 app.use(routes);
