@@ -78,3 +78,41 @@ interface UserFormData {
   role: Role;
   status: Status;
 }
+
+interface Student {
+  id: number;
+  userId?: number | null;
+  fullName: string;
+  rollNumber: string;
+  grade?: string | null;
+  section?: string | null;
+  guardianName?: string | null;
+  guardianContact?: string | null;
+  enrolledAt: string;
+  createdBy?: number | null;
+  status: Status; // reuses existing user_status enum
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+}
+
+interface StudentFilters {
+  page?: number;
+  limit?: number;
+  grade?: string;
+  section?: string;
+  status?: Status | "";
+  sortBy?: string;
+  order?: SortOrder;
+  search?: string;
+}
+
+interface StudentFormData {
+  fullName: string;
+  rollNumber: string;
+  grade: string | null;
+  section: string | null;
+  guardianName?: string;
+  guardianContact?: string;
+  status: Status;
+}
