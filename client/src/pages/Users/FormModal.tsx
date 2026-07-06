@@ -15,12 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useGetUserById, useCreateUser, useUpdateUser } from "@/hooks/useUsers";
 import { ROLE_OPTIONS, STATUS_OPTIONS } from "@/utils/helper";
+import ModalActions from "@/components/ModalActions";
 
 interface UserFormModalProps {
   open: boolean;
@@ -253,7 +253,13 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, onClose, id }) => {
 
             {/* Footer */}
             <DialogFooter className="p-0 my-2 mr-2 bg-gray-50 border-t border-gray-100 flex gap-2 justify-end">
-              <Button
+              <ModalActions
+                onCancel={handleClose}
+                isLoading={isLoading}
+                confirmLabel={isEdit ? "Save" : "Create"}
+                confirmType="submit"
+              />
+              {/* <Button
                 type="button"
                 variant="outline"
                 onClick={handleClose}
@@ -274,7 +280,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, onClose, id }) => {
                 ) : (
                   "Create"
                 )}
-              </Button>
+              </Button> */}
             </DialogFooter>
           </form>
         )}

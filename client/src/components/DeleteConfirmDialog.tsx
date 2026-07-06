@@ -2,13 +2,11 @@ import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
-  // AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import ModalActions from "./ModalActions";
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -33,10 +31,7 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
         </div>
 
         <AlertDialogHeader className="text-center items-center">
-          {/* <AlertDialogTitle className="text-gray-900 font-bold text-lg">
-            Delete User
-          </AlertDialogTitle> */}
-          <AlertDialogDescription className="text-gray-400 text-sm text-center">
+          <AlertDialogDescription className="text-gray-500 text-sm">
             Are you sure you want to delete{" "}
             {userName ? (
               <span className="font-semibold text-gray-700">{userName}</span>
@@ -48,24 +43,13 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
         </AlertDialogHeader>
 
         <AlertDialogFooter className="flex gap-2 mt-2">
-          <AlertDialogCancel
-            onClick={onClose}
-            disabled={isLoading}
-            className="flex-1 rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50"
-          >
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={onConfirm}
-            disabled={isLoading}
-            className="flex-1 rounded-xl bg-red-500 hover:bg-red-600 text-white"
-          >
-            {isLoading ? (
-              <Loader2 size={15} className="animate-spin" />
-            ) : (
-              "Delete"
-            )}
-          </AlertDialogAction>
+          <ModalActions
+            onCancel={onClose}
+            onConfirm={onConfirm}
+            isLoading={isLoading}
+            confirmLabel="Delete"
+            destructive
+          />
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
