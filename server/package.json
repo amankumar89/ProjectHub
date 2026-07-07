@@ -2,16 +2,6 @@
   "name": "project-hub-server",
   "version": "1.0.0",
   "description": "A Project Management Systems",
-  "main": "dist/src/index.js",
-  "scripts": {
-    "dev": "tsx watch index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit",
-    "generate": "drizzle-kit generate",
-    "push": "drizzle-kit push --verbose",
-    "studio": "drizzle-kit studio"
-  },
   "author": "Aman Kumar",
   "license": "ISC",
   "dependencies": {
