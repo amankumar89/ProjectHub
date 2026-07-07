@@ -3,7 +3,7 @@ import cors from "cors";
 import routes from "./routes/index";
 import cookieParser from "cookie-parser";
 import { globalErrorHandler } from "./middlewares/error-handler.middleware";
-import { FRONTEND_URL, PORT } from "./config/env";
+import { FRONTEND_URL } from "./config/env";
 
 const app = express();
 
