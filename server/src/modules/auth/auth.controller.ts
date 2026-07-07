@@ -63,6 +63,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
 const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   // check user exists or not, if not return error 401
+
   const user = await findUserByEmail(email);
 
   if (!user) return sendNotAuthorized(res, "Invalid username or password");
