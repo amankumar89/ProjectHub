@@ -114,4 +114,6 @@ api.interceptors.response.use(
   },
 );
 
+console.log(api.defaults.baseURL);
+
 export default api;
