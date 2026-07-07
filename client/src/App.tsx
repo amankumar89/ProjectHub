@@ -7,13 +7,12 @@ import Layout from "@/components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users/index";
 import Tasks from "./pages/Tasks";
-import Students from "./pages/Students";
+import Students from "./pages/Students/index";
 import Notes from "./pages/Notes";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import ProfilePage from "./pages/Profile";
-
-const ALL_ROLES = ["ADMIN", "TEACHER", "STUDENT", "USER"] as const;
+import { ALL_ROLES } from "./utils/helper";
 
 const App: React.FC = () => {
   return (

@@ -76,3 +76,100 @@ export const updateUserSchema = z.object({
         "Request body cannot be empty. Provide at least one field to update.",
     }),
 });
+
+// STUDENT
+const gradeEnum = z.enum([
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+]);
+
+export const createStudentSchema = z.object({
+  body: z.object({
+    fullName: z
+      .string()
+      .trim()
+      .min(2, "Full name must be at least 2 characters")
+      .max(100, "Full name must not exceed 100 characters"),
+    rollNumber: z
+      .string()
+      .trim()
+      .min(1, "Roll number is required")
+      .max(50, "Roll number must not exceed 50 characters"),
+    grade: gradeEnum.optional(),
+    section: z.string().trim().max(10).optional(),
+    guardianName: z.string().trim().max(100).optional(),
+    guardianContact: z
+      .string()
+      .trim()
+      .regex(/^[0-9+\-\s()]{7,20}$/, "Invalid contact number")
+      .optional(),
+    userId: z.number().int().positive().optional(),
+  }),
+  query: z.object({}).optional(),
+  params: z.object({}).optional(),
+});
+
+export const updateStudentSchema = z.object({
+  body: z
+    .object({
+      fullName: z.string().trim().min(2).max(100).optional(),
+      rollNumber: z.string().trim().min(1).max(50).optional(),
+      grade: gradeEnum.optional(),
+      section: z.string().trim().max(10).optional(),
+      guardianName: z.string().trim().max(100).optional(),
+      guardianContact: z
+        .string()
+        .trim()
+        .regex(/^[0-9+\-\s()]{7,20}$/, "Invalid contact number")
+        .optional(),
+      userId: z.number().int().positive().nullable().optional(),
+      status: z.enum(["ACTIVE", "INACTIVE", "BLOCKED", "DELETED"]).optional(),
+    })
+    .refine((data) => Object.keys(data).length > 0, {
+      message: "At least one field must be provided to update",
+    }),
+  query: z.object({}).optional(),
+  params: z.object({
+    id: z.coerce.number().int().positive("Invalid student id"),
+  }),
+});
+
+export const getStudentSchema = z.object({
+  body: z.object({}).optional(),
+  query: z.object({}).optional(),
+  params: z.object({
+    id: z.coerce.number().int().positive("Invalid student id"),
+  }),
+});
+
+export const deleteStudentSchema = z.object({
+  body: z.object({}).optional(),
+  query: z.object({}).optional(),
+  params: z.object({
+    id: z.coerce.number().int().positive("Invalid student id"),
+  }),
+});
+
+export const listStudentsSchema = z.object({
+  body: z.object({}).optional(),
+  params: z.object({}).optional(),
+  query: z.object({
+    page: z.coerce.number().int().positive().optional().default(1),
+    limit: z.coerce.number().int().positive().max(100).optional().default(20),
+    grade: gradeEnum.optional(),
+    section: z.string().trim().optional(),
+    status: z.enum(userStatusEnum.enumValues).optional(),
+    search: z.string().trim().optional(),
+    enrolledAt: z.date().optional(),
+  }),
+});

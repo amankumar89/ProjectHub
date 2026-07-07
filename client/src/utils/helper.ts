@@ -1,3 +1,5 @@
+export const ALL_ROLES = ["ADMIN", "TEACHER", "STUDENT", "USER"] as const;
+
 export const ROLE_STYLE: Record<Role, string> = {
   ADMIN: "bg-violet-100 text-violet-700 border-violet-200",
   TEACHER: "bg-sky-100 text-sky-700 border-sky-200",
@@ -86,3 +88,27 @@ export const formatDate = (iso?: string | null): string => {
     year: "numeric",
   });
 };
+
+export const GRADE_OPTIONS = [
+  { label: "Grade 1", value: "1" },
+  { label: "Grade 2", value: "2" },
+  { label: "Grade 3", value: "3" },
+  { label: "Grade 4", value: "4" },
+  { label: "Grade 5", value: "5" },
+];
+
+export const SECTION_OPTIONS = [
+  { label: "A", value: "A" },
+  { label: "B", value: "B" },
+  { label: "C", value: "C" },
+];
+
+export function removeEmptyFields<T extends object>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => {
+      if (value === null || value === undefined) return false;
+      if (typeof value === "string" && value.trim() === "") return false;
+      return true;
+    }),
+  ) as Partial<T>;
+}
