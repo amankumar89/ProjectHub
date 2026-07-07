@@ -1,30 +1,20 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
-    "target": "ESNext",
-    "module": "Preserve",
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": false, // false for vercel deployments
-    "strict": true,
-    "types": ["bun"]
-  }
-}
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": ".",
+    "outDir": "dist",
 
-// {
-//   "compilerOptions": {
-//     "types": ["bun", "node"],
-//     "target": "es2022",
-//     "module": "ESNext",
-//     "moduleResolution": "bundler",
-//     "noEmit": true, // Bun executes TS files directly, no need to output JS files
-//     "strict": true,
-//     "skipLibCheck": true,
-//     "esModuleInterop": true,
-//     "isolatedModules": true,
-//     "forceConsistentCasingInFileNames": true
-//   },
-//   "include": ["server/**/*"],
-//   "exclude": ["node_modules"]
-// }
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+
+    "sourceMap": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts", "api/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
