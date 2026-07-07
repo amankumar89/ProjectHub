@@ -26,6 +26,7 @@ import {
 } from "../../utils/response";
 import { JWT_REFRESH_SECRET } from "../../config/env";
 import type { Secret } from "jsonwebtoken";
+import { AuthRequest } from "../../middlewares/authenticate.middleware";
 
 const COOKIE_NAME = "refreshToken";
 const COOKIE_OPTIONS = {
@@ -105,7 +106,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // user profile
-const profile = asyncHandler(async (req: Request, res: Response) => {
+const profile = asyncHandler(async (req: AuthRequest, res: Response) => {
   // if authorized user exists return it data
   const user = await findUserById(Number(req.user?.id));
 
@@ -115,7 +116,7 @@ const profile = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // logout
-const logout = asyncHandler(async (req: Request, res: Response) => {
+const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
   const userId = Number(req.user!.id);
   if (isNaN(userId)) return sendBadRequest(res, "Invalid user ID");
   const user = await updateUser(userId, {

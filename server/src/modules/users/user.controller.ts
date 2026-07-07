@@ -24,6 +24,7 @@ import {
   sendSuccess,
 } from "../../utils/response";
 import getAllowedFields from "../../utils/permission";
+import { AuthRequest } from "../../middlewares/authenticate.middleware";
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
   const tempUser: User = req.body;
@@ -75,16 +76,16 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   return sendSuccess(res, "Data fetched successfully", users);
 });
 
-const getUserById = asyncHandler(async (req: Request, res: Response) => {
+const getUserById = asyncHandler(async (req: AuthRequest, res: Response) => {
   let tempId = Number(
-    req.user?.role === "ADMIN" ? req.params.id : req.user?.id,
+    req.user!.role === "ADMIN" ? req.params.id : req.user?.id,
   );
   const user = await findUserById(tempId);
   if (!user) return sendNotFound(res, "User not Found");
   return sendSuccess(res, "User fetched successfully", profileUser(user));
 });
 
-const updateUserById = asyncHandler(async (req: Request, res: Response) => {
+const updateUserById = asyncHandler(async (req: AuthRequest, res: Response) => {
   const targetUserId = Number(req.params.id);
   if (isNaN(targetUserId)) return sendBadRequest(res, "Invalid user ID");
 

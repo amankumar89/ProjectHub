@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch index.ts",
     "build": "tsc",
-    "start": "node dist/src/index.js",
+    "start": "node dist/src/app.js",
     "typecheck": "tsc --noEmit",
     "generate": "drizzle-kit generate",
     "push": "drizzle-kit push --verbose",
@@ -32,6 +32,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.0",
+    "drizzle-kit": "^0.31.10",
     "tsx": "^4.23.0",
     "typescript": "^6.0.3"
   }

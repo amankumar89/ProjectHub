@@ -14,13 +14,13 @@ interface ListStudentsFilters {
 
 export const findStudentById = async (id: number) => {
   return db.query.students.findFirst({
-    where: (students, { eq }) => eq(students.id, id),
+    with: { id },
   });
 };
 
 export const findStudentByRollNumber = async (rollNumber: string) => {
   return db.query.students.findFirst({
-    where: (students, { eq }) => eq(students.rollNumber, rollNumber),
+    with: { rollNumber },
   });
 };
 
