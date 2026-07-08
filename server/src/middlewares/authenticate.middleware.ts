@@ -5,7 +5,7 @@ import { JWT_ACCESS_SECRET } from "../config/env";
 import { asyncHandler } from "../utils/helper";
 import type { UserRole } from "../db/schema";
 import { sendForbidden, sendNotAuthorized } from "../utils/response";
-import { findUserById } from "../services/user.service";
+import userService from "../services/user.service";
 
 export interface AuthRequest extends Request {
   user?: JwtPayload;
@@ -27,7 +27,7 @@ export const authenticate = asyncHandler(
 
     if (!decoded) return sendNotAuthorized(res, "Unauthorized: Token Expired");
 
-    const tempUser = await findUserById(decoded.id);
+    const tempUser = await userService.findUserById(decoded.id);
 
     if (!tempUser?.id) return sendNotAuthorized(res, "Unauthorized");
 

@@ -1,15 +1,9 @@
 import type { Request, Response } from "express";
 import { asyncHandler, hashPassword, publicUser } from "../../utils/helper";
+import userService from "../../services/user.service";
 import {
-  deleteUser,
-  findAllUsers,
-  findUserById,
-  updateUser,
-  createUser as saveUser,
-} from "../../services/user.service";
-import {
-  userRoleEnum,
-  userStatusEnum,
+  roleEnum,
+  statusEnum,
   type User,
   type UserRole,
   type UserStatus,
@@ -29,7 +23,7 @@ import { AuthRequest } from "../../middlewares/authenticate.middleware";
 const createUser = asyncHandler(async (req: Request, res: Response) => {
   const tempUser: User = req.body;
 
-  const [user] = await saveUser({
+  const [user] = await userService.createUser({
     ...tempUser,
     password: await hashPassword(tempUser.password ?? "admin"),
   });
@@ -50,12 +44,12 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     order = "desc",
   } = req.query;
 
-  if (role && !userRoleEnum.enumValues.includes(role as UserRole)) {
-    return sendBadRequest(res, `Role must be ${userRoleEnum.enumValues}`);
+  if (role && !roleEnum.enumValues.includes(role as UserRole)) {
+    return sendBadRequest(res, `Role must be ${roleEnum.enumValues}`);
   }
 
-  if (status && !userStatusEnum.enumValues.includes(status as UserStatus)) {
-    return sendBadRequest(res, `Status must be ${userStatusEnum.enumValues}`);
+  if (status && !statusEnum.enumValues.includes(status as UserStatus)) {
+    return sendBadRequest(res, `Status must be ${statusEnum.enumValues}`);
   }
 
   page = Number(page);
@@ -63,7 +57,7 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 
   const offset = (page - 1) * limit;
 
-  const users = await findAllUsers(
+  const data = await userService.findAllUsers(
     page as number,
     limit as number,
     offset as number,
@@ -73,14 +67,14 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     sortBy as keyof User,
     order as "asc" | "desc",
   );
-  return sendSuccess(res, "Data fetched successfully", users);
+  return sendSuccess(res, "Data fetched successfully", data);
 });
 
 const getUserById = asyncHandler(async (req: AuthRequest, res: Response) => {
   let tempId = Number(
     req.user!.role === "ADMIN" ? req.params.id : req.user?.id,
   );
-  const user = await findUserById(tempId);
+  const user = await userService.findUserById(tempId);
   if (!user) return sendNotFound(res, "User not Found");
   return sendSuccess(res, "User fetched successfully", profileUser(user));
 });
@@ -102,7 +96,7 @@ const updateUserById = asyncHandler(async (req: AuthRequest, res: Response) => {
   // const isAdmin = authUser?.role === "ADMIN";
   const isSelf = authUser?.id === targetUserId;
 
-  const targetUser = await findUserById(targetUserId);
+  const targetUser = await userService.findUserById(targetUserId);
 
   if (!targetUser) return sendNotFound(res, "User not found");
 
@@ -132,7 +126,7 @@ const updateUserById = asyncHandler(async (req: AuthRequest, res: Response) => {
   }
 
   // update user in db
-  const updatedUser = await updateUser(targetUserId, payload);
+  const updatedUser = await userService.updateUser(targetUserId, payload);
 
   if (!updatedUser) return sendNotFound(res, "User not found");
 
@@ -144,7 +138,7 @@ const deleteUserById = asyncHandler(async (req: Request, res: Response) => {
 
   if (isNaN(userId)) return sendBadRequest(res, "Invalid user ID");
 
-  const deletedUser = await deleteUser(userId);
+  const deletedUser = await userService.deleteUser(userId);
 
   if (!deletedUser) return sendNotFound(res, "User not found");
 
