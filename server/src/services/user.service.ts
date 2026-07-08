@@ -7,9 +7,9 @@ import {
   type UserStatus,
 } from "../db/schema";
 import { db } from "../db";
-import { profileUser } from "../utils/helper";
+import { buildPagination, profileUser } from "../utils/helper";
 
-export const findUserByEmail = async (email: string) => {
+const findUserByEmail = async (email: string) => {
   const [user] = await db
     .select()
     .from(users)
@@ -18,16 +18,16 @@ export const findUserByEmail = async (email: string) => {
   return user;
 };
 
-export const createUser = async (data: NewUser) => {
+const createUser = async (data: NewUser) => {
   return await db.insert(users).values(data).returning();
 };
 
-export const findUserById = async (id: number) => {
+const findUserById = async (id: number) => {
   const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
   return user;
 };
 
-export const findAllUsers = async (
+const findAllUsers = async (
   page: number,
   limit: number,
   offset: number,
@@ -89,14 +89,11 @@ export const findAllUsers = async (
 
   return {
     users: allUsers.map((user) => profileUser(user)),
-    total: Number(count),
-    page,
-    limit,
-    totalPages: Math.ceil(Number(count) / limit),
+    pagination: buildPagination(page, limit, Number(count)),
   };
 };
 
-export const updateUser = async (
+const updateUser = async (
   id: number,
   payload: Partial<User>,
 ): Promise<User | null> => {
@@ -108,7 +105,7 @@ export const updateUser = async (
   return updatedUser;
 };
 
-export const deleteUser = async (id: number): Promise<User | null> => {
+const deleteUser = async (id: number): Promise<User | null> => {
   const [deletedUser] = await db
     .update(users)
     .set({
@@ -120,3 +117,14 @@ export const deleteUser = async (id: number): Promise<User | null> => {
     .returning();
   return deletedUser;
 };
+
+const userService = {
+  createUser,
+  updateUser,
+  findAllUsers,
+  findUserByEmail,
+  findUserById,
+  deleteUser,
+};
+
+export default userService;

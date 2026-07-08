@@ -2,7 +2,7 @@ import { pgEnum } from "drizzle-orm/pg-core";
 
 const userRoles = ["USER", "ADMIN", "TEACHER", "STUDENT"] as const;
 const userStatus = ["ACTIVE", "INACTIVE", "BLOCKED", "DELETED"] as const;
-const taskStatus = ["PENDING", "IN_PROGRESS", "COMPLETED", "OVERDUE"] as const;
+const taskStatus = ["TODO", "IN_PROGRESS", "COMPLETED"] as const;
 const taskPriority = ["LOW", "MEDIUM", "HIGH"] as const;
 
 export const roleEnum = pgEnum("role", userRoles);

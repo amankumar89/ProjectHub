@@ -8,7 +8,7 @@ import validate from "../../middlewares/validation.middleware";
 import {
   createUserSchema,
   updateUserSchema,
-} from "../../utils/validation-schema";
+} from "../../utils/validators/index";
 
 const usersRoute = Router();
 

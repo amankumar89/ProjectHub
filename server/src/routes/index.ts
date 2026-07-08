@@ -2,11 +2,11 @@ import { Router } from "express";
 import homeRoutes from "./home.route";
 import authRoutes from "../modules/auth/auth.route";
 import usersRoute from "../modules/users/user.route";
+import { sendNotFound } from "../utils/response";
 import {
   authenticate,
   authorize,
 } from "../middlewares/authenticate.middleware";
-import { sendNotFound } from "../utils/response";
 import studentsRoute from "../modules/students/student.route";
 import tasksRoute from "../modules/tasks/task.route";
 import notesRoute from "../modules/notes/note.route";

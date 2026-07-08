@@ -1,13 +1,12 @@
 import { Router } from "express";
-import studentsController from "./student.controller";
 import validate from "../../middlewares/validation.middleware";
 import {
   createStudentSchema,
-  deleteStudentSchema,
-  getStudentSchema,
-  listStudentsSchema,
+  listStudentsQuerySchema,
+  studentIdParamSchema,
   updateStudentSchema,
-} from "../../utils/validation-schema";
+} from "../../utils/validators";
+import studentsController from "./student.controller";
 
 const studentsRoute = Router();
 
@@ -15,20 +14,20 @@ const studentsRoute = Router();
 studentsRoute.post(
   "/",
   validate(createStudentSchema),
-  studentsController.createStudent,
+  studentsController.enrollStudent,
 );
 
 // GET ALL STUDENTS
 studentsRoute.get(
   "/",
-  validate(listStudentsSchema),
+  validate(listStudentsQuerySchema),
   studentsController.getAllStudents,
 );
 
 // GET STUDENT BY ID
 studentsRoute.get(
   "/:id",
-  validate(getStudentSchema),
+  validate(studentIdParamSchema),
   studentsController.getStudentById,
 );
 
@@ -36,14 +35,14 @@ studentsRoute.get(
 studentsRoute.put(
   "/:id",
   validate(updateStudentSchema),
-  studentsController.updateStudentById,
+  studentsController.updateStudent,
 );
 
 // DELETE STUDENT BY ID
 studentsRoute.delete(
   "/:id",
-  validate(deleteStudentSchema),
-  studentsController.deleteStudentById,
+  validate(studentIdParamSchema),
+  studentsController.deleteStudent,
 );
 
 export default studentsRoute;

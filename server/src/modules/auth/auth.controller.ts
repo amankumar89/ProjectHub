@@ -2,18 +2,13 @@ import type { Request, Response } from "express";
 import { asyncHandler, compareToken, hashToken } from "../../utils/helper";
 import type { NewUser } from "../../db/schema";
 import {
-  createUser,
-  findUserByEmail,
-  findUserById,
-  updateUser,
-} from "../../services/user.service";
-import {
   comparePassword,
   hashPassword,
   profileUser,
   publicUser,
 } from "../../utils/helper";
 import { generateTokens, verifyToken, type JwtPayload } from "../../utils/jwt";
+import userServices from "../../services/user.service";
 import {
   sendBadRequest,
   sendConflict,
@@ -41,7 +36,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, password }: NewUser = req.body;
 
   // check email already exists or not
-  const user = await findUserByEmail(email);
+  const user = await userServices.findUserByEmail(email);
 
   // if yes return error
   if (user?.email) return sendConflict(res, "Email already exists");
@@ -50,7 +45,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
   const passwordHashed = await hashPassword(password);
 
   // save user
-  const [savedUser] = await createUser({
+  const [savedUser] = await userServices.createUser({
     ...req.body,
     password: passwordHashed,
   });
@@ -64,7 +59,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   // check user exists or not, if not return error 401
 
-  const user = await findUserByEmail(email);
+  const user = await userServices.findUserByEmail(email);
 
   if (!user) return sendNotAuthorized(res, "Invalid username or password");
 
@@ -90,7 +85,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   const hashRefreshToken = hashToken(refreshToken);
 
   // save user with refresh token and last login
-  const savedUser = await updateUser(user.id, {
+  const savedUser = await userServices.updateUser(user.id, {
     lastLogin: new Date(),
     refreshToken: hashRefreshToken,
   });
@@ -109,7 +104,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
 // user profile
 const profile = asyncHandler(async (req: AuthRequest, res: Response) => {
   // if authorized user exists return it data
-  const user = await findUserById(Number(req.user?.id));
+  const user = await userServices.findUserById(Number(req.user?.id));
 
   if (!user) return sendNotFound(res, "User not found");
 
@@ -120,7 +115,7 @@ const profile = asyncHandler(async (req: AuthRequest, res: Response) => {
 const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
   const userId = Number(req.user!.id);
   if (isNaN(userId)) return sendBadRequest(res, "Invalid user ID");
-  const user = await updateUser(userId, {
+  const user = await userServices.updateUser(userId, {
     refreshToken: null,
   });
   if (!user) return sendInternalError(res, "Failed to logout");
@@ -145,7 +140,7 @@ const refreshToken = asyncHandler(async (req: Request, res: Response) => {
   if (!decode) return sendNotAuthorized(res, "Refresh Token not valid or used");
 
   // find user if not found return error
-  const user = await findUserById(Number(decode.id));
+  const user = await userServices.findUserById(Number(decode.id));
 
   if (!user) return sendNotAuthorized(res, "Refresh Token not valid or used");
 
@@ -167,7 +162,7 @@ const refreshToken = asyncHandler(async (req: Request, res: Response) => {
   });
 
   // save user with refresh token and last login
-  const savedUser = await updateUser(user.id, {
+  const savedUser = await userServices.updateUser(user.id, {
     lastLogin: new Date(),
     refreshToken: hashToken(refreshToken),
   });
