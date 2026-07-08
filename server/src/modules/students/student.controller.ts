@@ -1,78 +1,101 @@
-import type { Response } from "express";
-import type { AuthRequest } from "../../middlewares/authenticate.middleware"; // adjust path to your actual auth middleware file
+import type { Request, Response } from "express";
 import { asyncHandler } from "../../utils/helper";
-import { sendSuccess, sendCreated, sendNotFound } from "../../utils/response";
+import studentsService from "../../services/student.service";
 import {
-  saveStudent,
-  updateStudent,
-  softDeleteStudent,
-  findStudentById,
-  findAllStudents,
-} from "../../services/student.service";
+  sendConflict,
+  sendCreated,
+  sendNotFound,
+  sendSuccess,
+} from "../../utils/response";
 
-const createStudent = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const student = await saveStudent(req.body, req.user!.id);
-  sendCreated(res, "Student created successfully.", student);
-});
+const enrollStudent = asyncHandler(async (req: Request, res: Response) => {
+  const { studentId, name, email, phone, enrolledAt } = req.body;
 
-const getStudentById = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const id = Number(req.params.id);
-  const student = await findStudentById(id);
-
-  if (!student || student.deletedAt) {
-    return sendNotFound(res, "Student not found.");
+  const existing = await studentsService.findStudentByStudentId(studentId);
+  if (existing) {
+    return sendConflict(res, "A student with this student ID already exists");
   }
 
-  sendSuccess(res, "Student fetched successfully.", student);
-});
-
-const getAllStudents = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const { page, limit, grade, section, status, search } = req.query as any;
-
-  const result = await findAllStudents({
-    page: Number(page) || 1,
-    limit: Number(limit) || 10,
-    grade: grade as string | undefined,
-    section: section as string | undefined,
-    status: status as any,
-    search: search as string | undefined,
+  const student = await studentsService.insertStudent({
+    studentId,
+    name,
+    email,
+    phone,
+    enrolledAt: new Date(enrolledAt).toISOString().slice(0, 10),
+    addedBy: req.user!.id,
   });
 
-  sendSuccess(res, "Students fetched successfully.", result);
+  return sendCreated(res, "Student created successfully", student);
+});
+const getAllStudents = asyncHandler(async (req: Request, res: Response) => {
+  const search = req.query.search as string | undefined;
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : 20;
+
+  const result = await studentsService.listStudents({ search, page, limit });
+
+  return sendSuccess(res, "Students fetched successfully", {
+    students: result.data,
+    pagination: result.pagination,
+  });
+});
+const getStudentById = asyncHandler(async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+
+  const student = await studentsService.findActiveStudentById(id);
+  if (!student) {
+    return sendNotFound(res, "Student not found");
+  }
+
+  return sendSuccess(res, "Student fetched successfully", student);
+});
+const updateStudent = asyncHandler(async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const { studentId, name, email, phone, enrolledAt } = req.body;
+
+  const existing = await studentsService.findActiveStudentById(id);
+  if (!existing) {
+    return sendNotFound(res, "Student not found");
+  }
+
+  if (studentId && studentId !== existing.studentId) {
+    const conflict = await studentsService.findStudentByStudentId(studentId);
+    if (conflict) {
+      return sendConflict(res, "A student with this student ID already exists");
+    }
+  }
+
+  const updated = await studentsService.updateStudentById(id, {
+    studentId,
+    name,
+    email,
+    phone,
+    enrolledAt: enrolledAt
+      ? new Date(enrolledAt).toISOString().slice(0, 10)
+      : undefined,
+  });
+
+  return sendSuccess(res, "Student updated successfully", updated);
+});
+const deleteStudent = asyncHandler(async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+
+  const existing = await studentsService.findActiveStudentById(id);
+  if (!existing) {
+    return sendNotFound(res, "Student not found");
+  }
+
+  const deleted = await studentsService.softDeleteStudentById(id);
+
+  return sendSuccess(res, "Student deleted successfully", deleted);
 });
 
-const updateStudentById = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const id = Number(req.params.id);
-    const updated = await updateStudent(id, req.body);
-
-    if (!updated) {
-      return sendNotFound(res, "Student not found.");
-    }
-
-    sendSuccess(res, "Student updated successfully.", updated);
-  },
-);
-
-const deleteStudentById = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const id = Number(req.params.id);
-    const deleted = await softDeleteStudent(id);
-
-    if (!deleted) {
-      return sendNotFound(res, "Student not found.");
-    }
-
-    sendSuccess(res, "Student deleted successfully.");
-  },
-);
-
 const studentsController = {
-  createStudent,
-  updateStudentById,
-  getStudentById,
+  enrollStudent,
   getAllStudents,
-  deleteStudentById,
+  getStudentById,
+  updateStudent,
+  deleteStudent,
 };
 
 export default studentsController;
