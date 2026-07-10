@@ -45,7 +45,7 @@ const UsersPage: React.FC = () => {
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
 
   const users: User[] = data?.users ?? [];
-  const total: number = data?.total ?? 0;
+  const total: number = data?.pagination.total ?? 0;
 
   const updateFilter = useCallback(
     <K extends keyof UserFilters>(key: K, value: UserFilters[K] | "") => {

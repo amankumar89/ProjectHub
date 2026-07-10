@@ -116,3 +116,13 @@ interface StudentFormData {
   guardianContact?: string;
   status: Status;
 }
+
+interface PaginationProps {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+type Paginated<T, K extends string = "data"> = {
+  pagination: PaginationProps;
+} & Record<K, T[]>;

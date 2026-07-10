@@ -52,7 +52,7 @@ const Students: React.FC = () => {
   const { data, isLoading, isError } = useStudents(removeEmptyFields(filters));
   const { mutate: deleteStudent, isPending: isDeleting } = useDeleteStudent();
 
-  const students: Student[] = data?.data ?? [];
+  const students: Student[] = data?.students ?? [];
   const total: number = data?.pagination.total ?? 0;
 
   const updateFilter = useCallback(

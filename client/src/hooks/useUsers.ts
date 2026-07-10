@@ -3,23 +3,15 @@ import toast from "react-hot-toast";
 import api from "../api/api";
 import type { AxiosError } from "axios";
 
-interface UsersResponse {
-  users: User[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-// ─── GET ALL (with filters) ───────────────────────────────────────────────────
+type UsersApiResponse = ApiResponse<Paginated<User, "users">>;
 
 export const useGetUsers = (filters: UserFilters) => {
   return useQuery({
     queryKey: ["users", filters],
     queryFn: () =>
       api
-        .get<ApiResponse<UsersResponse>>("/users", { params: filters })
-        .then((res) => res.data.data),
+        .get<UsersApiResponse>("/users", { params: filters })
+        .then((res) => res.data?.data),
   });
 };
 

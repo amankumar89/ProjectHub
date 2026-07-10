@@ -7,22 +7,12 @@ import {
 import api from "@/api/api";
 import toast from "react-hot-toast";
 
-interface Paginated<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
 const STUDENTS_KEY = "students";
 
-// ---- fetchers ----
+type StudentsApiResponse = ApiResponse<Paginated<Student, "students">>;
 
 const fetchStudents = async (filters: StudentFilters) => {
-  const { data } = await api.get<ApiResponse<Paginated<Student>>>("/students", {
+  const { data } = await api.get<StudentsApiResponse>("/students", {
     params: filters,
   });
   return data.data;
