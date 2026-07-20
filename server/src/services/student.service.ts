@@ -75,7 +75,6 @@ const listStudents = async (params: {
 const updateStudentById = async (
   id: number,
   data: Partial<{
-    studentId: string;
     name: string;
     email: string;
     phone: string;
