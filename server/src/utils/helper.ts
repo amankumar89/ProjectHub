@@ -59,3 +59,25 @@ export function buildPagination(
     totalPages: Math.max(1, Math.ceil(total / limit)),
   };
 }
+
+export function generateRandomId(
+  year: string,
+  charRange = "uppercase",
+  numDigits = 3,
+) {
+  const chars =
+    charRange === "uppercase"
+      ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      : charRange === "lowercase"
+        ? "abcdefghijklmnopqrstuvwxyz"
+        : "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+  const randomChar = chars[Math.floor(Math.random() * chars.length)];
+  const maxNum = Math.pow(10, numDigits) - 1;
+  const randomNumber = String(Math.floor(Math.random() * maxNum) + 1).padStart(
+    numDigits,
+    "0",
+  );
+
+  return `${year}-${randomChar}-${randomNumber}`;
+}

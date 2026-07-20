@@ -2,20 +2,20 @@ import { z } from "zod";
 import { statusEnum } from "../../db/schema";
 
 export const createStudentSchema = z.object({
-  body: {
-    name: z.string().min(2).max(150),
-    email: z.email().max(255).optional(),
+  body: z.object({
+    name: z.string("Name is requried").min(2).max(150),
+    email: z.email("Invalid email").max(255).optional(),
     phone: z.string().max(20).optional(),
     enrolledAt: z.coerce.date(),
-  },
+  }),
 });
 
 export const updateStudentSchema = createStudentSchema.partial();
 
 export const studentIdParamSchema = z.object({
-  param: {
+  param: z.object({
     id: z.coerce.number().int().positive(),
-  },
+  }),
 });
 
 const gradeEnum = z.enum([
