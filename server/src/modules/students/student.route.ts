@@ -25,11 +25,7 @@ studentsRoute.get(
 );
 
 // GET STUDENT BY ID
-studentsRoute.get(
-  "/:id",
-  // validate(studentIdParamSchema),
-  studentsController.getStudentById,
-);
+studentsRoute.get("/:id", studentsController.getStudentById);
 
 // UPDATE STUDENT BY ID
 studentsRoute.put(
@@ -39,10 +35,6 @@ studentsRoute.put(
 );
 
 // DELETE STUDENT BY ID
-studentsRoute.delete(
-  "/:id",
-  validate(studentIdParamSchema),
-  studentsController.deleteStudent,
-);
+studentsRoute.delete("/:id", studentsController.deleteStudent);
 
 export default studentsRoute;

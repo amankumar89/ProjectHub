@@ -58,22 +58,24 @@ const getStudentById = asyncHandler(async (req: Request, res: Response) => {
 
 const updateStudent = asyncHandler(async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  const { studentId, name, email, phone, enrolledAt } = req.body;
+
+  if (!id) return sendBadRequest(res, "Invalid student id");
+
+  const { name, email, phone, enrolledAt } = req.body;
 
   const existing = await studentsService.findActiveStudentById(id);
   if (!existing) {
     return sendNotFound(res, "Student not found");
   }
 
-  if (studentId && studentId !== existing.studentId) {
-    const conflict = await studentsService.findStudentByStudentId(studentId);
-    if (conflict) {
-      return sendConflict(res, "A student with this student ID already exists");
-    }
-  }
+  // if (studentId && studentId !== existing.studentId) {
+  //   const conflict = await studentsService.findStudentByStudentId(studentId);
+  //   if (conflict) {
+  //     return sendConflict(res, "A student with this student ID already exists");
+  //   }
+  // }
 
   const updated = await studentsService.updateStudentById(id, {
-    studentId,
     name,
     email,
     phone,
@@ -87,14 +89,16 @@ const updateStudent = asyncHandler(async (req: Request, res: Response) => {
 const deleteStudent = asyncHandler(async (req: Request, res: Response) => {
   const id = Number(req.params.id);
 
+  if (!id) return sendBadRequest(res, "Invalid Student id");
+
   const existing = await studentsService.findActiveStudentById(id);
   if (!existing) {
     return sendNotFound(res, "Student not found");
   }
 
-  const deleted = await studentsService.softDeleteStudentById(id);
+  await studentsService.softDeleteStudentById(id);
 
-  return sendSuccess(res, "Student deleted successfully", deleted);
+  return sendSuccess(res, "Student deleted successfully", { id });
 });
 
 const studentsController = {
