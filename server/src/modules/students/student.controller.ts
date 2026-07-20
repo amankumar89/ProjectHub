@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
-import { asyncHandler } from "../../utils/helper";
+import { asyncHandler, generateRandomId } from "../../utils/helper";
 import studentsService from "../../services/student.service";
 import {
+  sendBadRequest,
   sendConflict,
   sendCreated,
   sendNotFound,
@@ -9,12 +10,14 @@ import {
 } from "../../utils/response";
 
 const enrollStudent = asyncHandler(async (req: Request, res: Response) => {
-  const { studentId, name, email, phone, enrolledAt } = req.body;
+  const { name, email, phone, enrolledAt } = req.body;
 
-  const existing = await studentsService.findStudentByStudentId(studentId);
+  const existing = await studentsService.findStudentByEmail(email);
   if (existing) {
     return sendConflict(res, "A student with this student ID already exists");
   }
+
+  const studentId = generateRandomId(new Date().getFullYear().toString());
 
   const student = await studentsService.insertStudent({
     studentId,
@@ -27,6 +30,7 @@ const enrollStudent = asyncHandler(async (req: Request, res: Response) => {
 
   return sendCreated(res, "Student created successfully", student);
 });
+
 const getAllStudents = asyncHandler(async (req: Request, res: Response) => {
   const search = req.query.search as string | undefined;
   const page = req.query.page ? Number(req.query.page) : 1;
@@ -39,8 +43,10 @@ const getAllStudents = asyncHandler(async (req: Request, res: Response) => {
     pagination: result.pagination,
   });
 });
+
 const getStudentById = asyncHandler(async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+  const id = Number(req?.params?.id);
+  if (!id) return sendBadRequest(res, "Invalid student id");
 
   const student = await studentsService.findActiveStudentById(id);
   if (!student) {
@@ -49,6 +55,7 @@ const getStudentById = asyncHandler(async (req: Request, res: Response) => {
 
   return sendSuccess(res, "Student fetched successfully", student);
 });
+
 const updateStudent = asyncHandler(async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const { studentId, name, email, phone, enrolledAt } = req.body;

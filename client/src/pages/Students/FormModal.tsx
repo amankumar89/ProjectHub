@@ -22,8 +22,6 @@ import {
   useCreateStudent,
   useUpdateStudent,
 } from "@/hooks/useStudents";
-import { GRADE_OPTIONS, SECTION_OPTIONS } from "@/utils/helper";
-import { STATUS_OPTIONS } from "@/utils/helper";
 import ModalActions from "@/components/ModalActions";
 
 interface StudentFormModalProps {
@@ -31,6 +29,22 @@ interface StudentFormModalProps {
   onClose: () => void;
   id: number | null;
 }
+
+interface StudentFormData {
+  name: string;
+  email: string;
+  phone: string;
+  enrolledAt: string;
+  isActive: boolean;
+}
+
+const EMPTY_FORM: StudentFormData = {
+  name: "",
+  email: "",
+  phone: "",
+  enrolledAt: "",
+  isActive: true,
+};
 
 const FormModal: React.FC<StudentFormModalProps> = ({ open, onClose, id }) => {
   const isEdit = id !== null;
@@ -49,55 +63,45 @@ const FormModal: React.FC<StudentFormModalProps> = ({ open, onClose, id }) => {
     reset,
     formState: { errors },
   } = useForm<StudentFormData>({
-    defaultValues: {
-      fullName: "",
-      rollNumber: "",
-      grade: "",
-      section: "",
-      guardianName: "",
-      guardianContact: "",
-      status: "ACTIVE",
-    },
+    defaultValues: EMPTY_FORM,
   });
 
   useEffect(() => {
+    if (!open) return;
+
     if (isEdit && studentData) {
       reset({
-        fullName: studentData.fullName,
-        rollNumber: studentData.rollNumber,
-        grade: studentData.grade ?? "",
-        section: studentData.section ?? "",
-        guardianName: studentData.guardianName ?? "",
-        guardianContact: studentData.guardianContact ?? "",
-        status: studentData.status,
+        name: studentData.name,
+        email: studentData.email ?? "",
+        phone: studentData.phone ?? "",
+        enrolledAt: studentData.enrolledAt
+          ? String(studentData.enrolledAt).slice(0, 10)
+          : "",
+        isActive: studentData.isActive,
       });
+    } else if (!isEdit) {
+      reset(EMPTY_FORM);
     }
-  }, [studentData, isEdit, reset]);
-
-  useEffect(() => {
-    if (!open || !isEdit) {
-      reset({
-        fullName: "",
-        rollNumber: "",
-        grade: "",
-        section: "",
-        guardianName: "",
-        guardianContact: "",
-        status: "ACTIVE",
-      });
-    }
-  }, [open, isEdit, reset]);
+  }, [open, isEdit, studentData, reset]);
 
   const onSubmit = (data: StudentFormData) => {
+    const payload = {
+      name: data.name,
+      email: data.email || undefined,
+      phone: data.phone || undefined,
+      enrolledAt: data.enrolledAt,
+      isActive: isEdit ? data.isActive : undefined,
+    };
+
     if (isEdit) {
-      updateStudent({ id, payload: data });
+      updateStudent({ id, payload });
     } else {
-      createStudent({ ...data });
+      createStudent(payload);
     }
   };
 
   const handleClose = () => {
-    reset();
+    reset(EMPTY_FORM);
     onClose();
   };
 
@@ -126,117 +130,102 @@ const FormModal: React.FC<StudentFormModalProps> = ({ open, onClose, id }) => {
               <FullSpan>
                 <FieldGroup>
                   <Label
-                    htmlFor="fullName"
+                    htmlFor="name"
                     className="text-sm font-medium text-gray-700"
                   >
                     Full Name
                   </Label>
                   <Input
-                    id="fullName"
-                    placeholder="Enter Name"
+                    id="name"
+                    placeholder="Enter name"
                     className="rounded-xl border-gray-200 focus:border-indigo-400 focus:ring-indigo-100"
-                    {...register("fullName", {
-                      required: "Full name is required",
+                    {...register("name", {
+                      required: "Name is required",
+                      minLength: {
+                        value: 2,
+                        message: "Name must be at least 2 characters",
+                      },
+                      maxLength: {
+                        value: 150,
+                        message: "Name must be under 150 characters",
+                      },
                     })}
                   />
-                  {errors.fullName && (
-                    <FieldError>{errors.fullName.message}</FieldError>
-                  )}
-                </FieldGroup>
-              </FullSpan>
-
-              <FullSpan>
-                <FieldGroup>
-                  <Label
-                    htmlFor="rollNumber"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    Roll Number
-                  </Label>
-                  <Input
-                    id="rollNumber"
-                    placeholder="e.g. 2026-A-014"
-                    className="rounded-xl border-gray-200 focus:border-indigo-400 focus:ring-indigo-100"
-                    {...register("rollNumber", {
-                      required: "Roll number is required",
-                    })}
-                  />
-                  {errors.rollNumber && (
-                    <FieldError>{errors.rollNumber.message}</FieldError>
+                  {errors.name && (
+                    <FieldError>{errors.name.message}</FieldError>
                   )}
                 </FieldGroup>
               </FullSpan>
 
               <FieldGroup>
-                <Label className="text-sm font-medium text-gray-700">
-                  Grade
-                </Label>
-                <Select
-                  value={watch("grade")}
-                  onValueChange={(val) => setValue("grade", val)}
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-700"
                 >
-                  <SelectTrigger className="rounded-xl border-gray-200 focus:border-indigo-400">
-                    <SelectValue placeholder="Select grade" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    {GRADE_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FieldGroup>
-
-              <FieldGroup>
-                <Label className="text-sm font-medium text-gray-700">
-                  Section
+                  Email
                 </Label>
-                <Select
-                  value={watch("section")}
-                  onValueChange={(val) => setValue("section", val)}
-                >
-                  <SelectTrigger className="rounded-xl border-gray-200 focus:border-indigo-400">
-                    <SelectValue placeholder="Select section" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    {SECTION_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="student@example.com"
+                  className="rounded-xl border-gray-200 focus:border-indigo-400 focus:ring-indigo-100"
+                  {...register("email", {
+                    maxLength: {
+                      value: 255,
+                      message: "Email must be under 255 characters",
+                    },
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Enter a valid email",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <FieldError>{errors.email.message}</FieldError>
+                )}
               </FieldGroup>
 
               <FieldGroup>
                 <Label
-                  htmlFor="guardianName"
+                  htmlFor="phone"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Guardian Name
+                  Phone
                 </Label>
                 <Input
-                  id="guardianName"
-                  placeholder="Enter guardian name"
+                  id="phone"
+                  placeholder="Enter phone number"
                   className="rounded-xl border-gray-200 focus:border-indigo-400 focus:ring-indigo-100"
-                  {...register("guardianName")}
+                  {...register("phone", {
+                    maxLength: {
+                      value: 20,
+                      message: "Phone must be under 20 characters",
+                    },
+                  })}
                 />
+                {errors.phone && (
+                  <FieldError>{errors.phone.message}</FieldError>
+                )}
               </FieldGroup>
 
               <FieldGroup>
                 <Label
-                  htmlFor="guardianContact"
+                  htmlFor="enrolledAt"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Guardian Contact
+                  Enrolled At
                 </Label>
                 <Input
-                  id="guardianContact"
-                  placeholder="Phone or email"
+                  id="enrolledAt"
+                  type="date"
                   className="rounded-xl border-gray-200 focus:border-indigo-400 focus:ring-indigo-100"
-                  {...register("guardianContact")}
+                  {...register("enrolledAt", {
+                    required: "Enrollment date is required",
+                  })}
                 />
+                {errors.enrolledAt && (
+                  <FieldError>{errors.enrolledAt.message}</FieldError>
+                )}
               </FieldGroup>
 
               <FieldGroup>
@@ -244,15 +233,20 @@ const FormModal: React.FC<StudentFormModalProps> = ({ open, onClose, id }) => {
                   Status
                 </Label>
                 <Select
-                  value={watch("status")}
-                  onValueChange={(val) => setValue("status", val as Status)}
+                  value={watch("isActive")}
+                  onValueChange={(val: string | null) => {
+                    setValue("isActive", val === "ACTIVE");
+                  }}
                 >
                   <SelectTrigger className="rounded-xl border-gray-200 focus:border-indigo-400">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    {STATUS_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
+                    {[
+                      { label: "ACTIVE", value: "ACTIVE" },
+                      { label: "INACTIVE", value: "INACTIVE" },
+                    ].map((opt) => (
+                      <SelectItem key={opt.label} value={opt.value}>
                         {opt.label}
                       </SelectItem>
                     ))}

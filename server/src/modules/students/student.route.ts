@@ -27,7 +27,7 @@ studentsRoute.get(
 // GET STUDENT BY ID
 studentsRoute.get(
   "/:id",
-  validate(studentIdParamSchema),
+  // validate(studentIdParamSchema),
   studentsController.getStudentById,
 );
 

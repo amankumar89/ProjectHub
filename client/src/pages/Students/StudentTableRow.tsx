@@ -28,37 +28,24 @@ const StudentTableRow: React.FC<StudentTableRowProps> = ({
 
       <TableCell>
         <div className="flex items-center gap-3">
-          <StudentAvatar name={student.fullName} />
+          <StudentAvatar name={student.name} />
           <div>
             <p className="text-sm font-semibold text-gray-900 leading-tight">
-              {student.fullName}
+              {student.name}
             </p>
             <p className="text-xs text-gray-400">
-              Roll No. {student.rollNumber}
+              Student ID: {student.studentId}
             </p>
           </div>
         </div>
       </TableCell>
 
-      <TableCell className="text-sm text-gray-600">
-        {student.grade ?? "—"}
-      </TableCell>
+      <TableCell className="text-sm text-gray-600">{student.email}</TableCell>
 
-      <TableCell className="text-sm text-gray-600">
-        {student.section ?? "—"}
-      </TableCell>
+      <TableCell className="text-sm text-gray-600">{student.phone}</TableCell>
 
       <TableCell>
-        <div className="text-sm text-gray-700">
-          {student.guardianName ?? "—"}
-        </div>
-        <div className="text-xs text-gray-400">
-          {student.guardianContact ?? ""}
-        </div>
-      </TableCell>
-
-      <TableCell>
-        <StatusBadge value={student.status} />
+        <StatusBadge value={student.isActive ? "ACTIVE" : "INACTIVE"} />
       </TableCell>
 
       <TableCell className="text-sm text-gray-500">
