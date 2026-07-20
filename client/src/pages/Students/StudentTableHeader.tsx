@@ -21,7 +21,7 @@ const StudentsTableHeader: React.FC<StudentsTableHeaderProps> = ({
         <TableHead className={`${HEAD_CLASS} w-12`}>#</TableHead>
         <TableHead className={HEAD_CLASS}>
           <SortableHeader
-            col="fullName"
+            col="name"
             label="Student"
             sortBy={sortBy}
             order={order}
@@ -30,8 +30,8 @@ const StudentsTableHeader: React.FC<StudentsTableHeaderProps> = ({
         </TableHead>
         <TableHead className={HEAD_CLASS}>
           <SortableHeader
-            col="grade"
-            label="Grade"
+            col="email"
+            label="Email"
             sortBy={sortBy}
             order={order}
             onSort={onSort}
@@ -39,15 +39,22 @@ const StudentsTableHeader: React.FC<StudentsTableHeaderProps> = ({
         </TableHead>
         <TableHead className={HEAD_CLASS}>
           <SortableHeader
-            col="section"
-            label="Section"
+            col="phone"
+            label="Phone"
             sortBy={sortBy}
             order={order}
             onSort={onSort}
           />
         </TableHead>
-        <TableHead className={HEAD_CLASS}>Guardian</TableHead>
-        <TableHead className={HEAD_CLASS}>Status</TableHead>
+        <TableHead className={HEAD_CLASS}>
+          <SortableHeader
+            col="isActive"
+            label="Status"
+            sortBy={sortBy}
+            order={order}
+            onSort={onSort}
+          />
+        </TableHead>
         <TableHead className={HEAD_CLASS}>
           <SortableHeader
             col="enrolledAt"

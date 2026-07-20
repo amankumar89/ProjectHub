@@ -13,6 +13,15 @@ const findStudentByStudentId = async (studentId: string) => {
   return row ?? null;
 };
 
+const findStudentByEmail = async (email: string) => {
+  const [row] = await db
+    .select()
+    .from(students)
+    .where(eq(students.email, email))
+    .limit(1);
+  return row ?? null;
+};
+
 const insertStudent = async (data: {
   studentId: string;
   name: string;
@@ -106,6 +115,7 @@ const studentsService = {
   listStudents,
   updateStudentById,
   softDeleteStudentById,
+  findStudentByEmail,
 };
 
 export default studentsService;

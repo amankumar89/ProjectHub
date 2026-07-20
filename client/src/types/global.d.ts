@@ -81,19 +81,15 @@ interface UserFormData {
 
 interface Student {
   id: number;
-  userId?: number | null;
-  fullName: string;
-  rollNumber: string;
-  grade?: string | null;
-  section?: string | null;
-  guardianName?: string | null;
-  guardianContact?: string | null;
+  name: string;
+  email: string | null;
+  phone: string | null;
   enrolledAt: string;
-  createdBy?: number | null;
-  status: Status; // reuses existing user_status enum
-  createdAt: string;
-  updatedAt: string;
-  deletedAt?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  studentId: string;
+  isActive: boolean;
+  addedBy: number;
 }
 
 interface StudentFilters {
@@ -101,18 +97,20 @@ interface StudentFilters {
   limit?: number;
   grade?: string;
   section?: string;
-  status?: Status | "";
+  isActive?: boolean;
   sortBy?: string;
   order?: SortOrder;
   search?: string;
 }
 
-interface StudentFormData {
-  fullName: string;
-  rollNumber: string;
-  grade: string | null;
-  section: string | null;
-  guardianName?: string;
-  guardianContact?: string;
-  status: Status;
+type StudentFormData = Partial<Student>;
+
+interface PaginationProps {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
+type Paginated<T, K extends string = "data"> = {
+  pagination: PaginationProps;
+} & Record<K, T[]>;
