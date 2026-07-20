@@ -1,3 +1,5 @@
+import type { Role, Status } from "@/types/global";
+
 export const ALL_ROLES = ["ADMIN", "TEACHER", "STUDENT", "USER"] as const;
 
 export const ROLE_STYLE: Record<Role, string> = {
@@ -82,14 +84,6 @@ export const getInitials = (str: string) =>
 
 export const formatDate = (iso?: string | null): string => {
   if (!iso) return "—";
-  console.log(
-    new Date(iso).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }),
-  );
-
   return new Date(iso).toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "short",
