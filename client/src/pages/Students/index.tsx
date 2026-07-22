@@ -28,7 +28,6 @@ import ListLoadingState from "@/components/ListLoadingState";
 import ListEmptyState from "@/components/ListEmptyState";
 import TablePagination from "@/components/TablePagination";
 import BackButton from "@/components/BackButton";
-import type { Student, StudentFilters } from "@/types/global";
 
 const DEFAULT_FILTERS: StudentFilters = {
   page: 1,

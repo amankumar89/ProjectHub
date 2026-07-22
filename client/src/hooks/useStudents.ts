@@ -6,13 +6,6 @@ import {
 } from "@tanstack/react-query";
 import api from "@/api/api";
 import toast from "react-hot-toast";
-import type {
-  ApiResponse,
-  Paginated,
-  Student,
-  StudentFilters,
-  StudentFormData,
-} from "@/types/global";
 
 interface Paginated<T> {
   data: T[];

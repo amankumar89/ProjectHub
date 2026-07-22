@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { X } from "lucide-react";
 import styled from "styled-components";
-import type { Note } from "@/types/global";
 import { useCreateNote, useUpdateNote } from "@/hooks/useNotes";
 import RichTextEditor from "@/components/RichTextEditor";
 

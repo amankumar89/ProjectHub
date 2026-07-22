@@ -1,5 +1,3 @@
-import type { Role, Status } from "@/types/global";
-
 export const ALL_ROLES = ["ADMIN", "TEACHER", "STUDENT", "USER"] as const;
 
 export const ROLE_STYLE: Record<Role, string> = {
