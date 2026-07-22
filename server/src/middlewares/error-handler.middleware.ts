@@ -110,12 +110,7 @@ export const globalErrorHandler = (
       message: e.message,
     }));
 
-    sendError(
-      res,
-      422,
-      err?.issues?.[0].message ?? "Validation failed.",
-      fieldErrors,
-    );
+    sendError(res, 422, err?.issues?.[0].message ?? "Validation failed.", null);
     return;
   }
 

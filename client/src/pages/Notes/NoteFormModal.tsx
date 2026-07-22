@@ -7,10 +7,9 @@ import { useCreateNote, useUpdateNote } from "@/hooks/useNotes";
 import RichTextEditor from "@/components/RichTextEditor";
 
 interface NoteFormModalProps {
-  isOpen: boolean;
+  open: boolean;
   onClose: () => void;
   note?: Note | null;
-  userId: number;
 }
 
 interface FormDataProps {
@@ -19,10 +18,9 @@ interface FormDataProps {
 }
 
 const NoteFormModal: React.FC<NoteFormModalProps> = ({
-  isOpen,
+  open,
   onClose,
   note,
-  userId,
 }) => {
   const createNoteMutation = useCreateNote();
   const updateNoteMutation = useUpdateNote();
@@ -54,7 +52,7 @@ const NoteFormModal: React.FC<NoteFormModalProps> = ({
         body: "",
       });
     }
-  }, [note, reset, userId]);
+  }, [note, reset]);
 
   const onSubmit = async (data: FormDataProps) => {
     if (note?.id) {
@@ -65,7 +63,7 @@ const NoteFormModal: React.FC<NoteFormModalProps> = ({
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!open) return null;
 
   return (
     <ModalOverlay onClick={onClose}>
