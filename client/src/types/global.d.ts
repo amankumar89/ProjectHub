@@ -133,10 +133,11 @@ export interface UpdateNoteInput extends Partial<CreateNoteInput> {
   id: number;
 }
 
+export type NoteSortByProps = "createdAt" | "updatedAt" | "title" | "id";
 export interface NotesQueryParams {
   page?: number;
   limit?: number;
-  sortBy?: "createdAt" | "updatedAt" | "title" | "id";
-  sortOrder?: "asc" | "desc";
+  sortBy: NoteSortByProps;
+  sortOrder: "asc" | "desc";
   search?: string;
 }

@@ -28,13 +28,14 @@ import ListLoadingState from "@/components/ListLoadingState";
 import ListEmptyState from "@/components/ListEmptyState";
 import TablePagination from "@/components/TablePagination";
 import BackButton from "@/components/BackButton";
+import type { Student, StudentFilters } from "@/types/global";
 
 const DEFAULT_FILTERS: StudentFilters = {
   page: 1,
   limit: 10,
   grade: "",
   section: "",
-  status: "",
+  isActive: true,
   sortBy: "enrolledAt",
   order: "desc",
   search: "",
@@ -177,8 +178,10 @@ const Students: React.FC = () => {
             </Select>
 
             <Select
-              value={filters.status ?? ""}
-              onValueChange={(val) => updateFilter("status", val as Status)}
+              value={filters.isActive ? "ACTIVE" : "INACTIVE"}
+              onValueChange={(val: string | null) =>
+                updateFilter("isActive", val === "ACTIVE")
+              }
             >
               <SelectTrigger className="w-36 rounded-xl border-gray-200 text-sm">
                 <SelectValue placeholder="All Statuses" />
@@ -274,7 +277,7 @@ const Students: React.FC = () => {
         }}
         onConfirm={handleDeleteConfirm}
         isLoading={isDeleting}
-        userName={deleteTarget?.fullName}
+        userName={deleteTarget?.name}
       />
       <BackButton />
     </Wrapper>

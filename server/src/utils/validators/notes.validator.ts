@@ -7,7 +7,6 @@ export const createNoteSchema = z.object({
       .min(1, "Title is required")
       .max(255, "Title must be less than 255 characters"),
     body: z.string().optional().nullable(),
-    userId: z.number().int().positive("User ID must be a positive integer"),
   }),
 });
 
@@ -29,7 +28,7 @@ export const listNotesQuerySchema = z.object({
     page: z.coerce.number().int().positive().optional(),
     limit: z.coerce.number().int().positive().max(100).optional(),
     sortBy: z
-      .enum(["createdAt", "updatedAt", "title"])
+      .enum(["createdAt", "updatedAt", "title", "id"])
       .optional()
       .default("createdAt"),
     sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),

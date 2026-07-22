@@ -20,7 +20,7 @@ const NOTES_KEY = "notes";
 
 type NotesApiResponse = ApiResponse<Paginated<Note, "notes">>;
 
-const fetchNotes = async (filters: NotesQueryParams) => {
+const fetchNotes = async (filters: Partial<NotesQueryParams>) => {
   const { data } = await api.get<NotesApiResponse>("/notes", {
     params: filters,
   });
@@ -55,7 +55,7 @@ const deleteNoteRequest = async (id: number) => {
 
 // ---- hooks ----
 
-export const useNotes = (filters: NotesQueryParams = {}) => {
+export const useNotes = (filters: Partial<NotesQueryParams>) => {
   return useQuery({
     queryKey: [NOTES_KEY, filters],
     queryFn: () => fetchNotes(filters),
