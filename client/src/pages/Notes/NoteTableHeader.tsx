@@ -6,7 +6,7 @@ import type { NoteSortByProps, SortOrder } from "@/types/global";
 interface NoteTableHeaderProps {
   sortBy?: string;
   order?: SortOrder;
-  onSort: (col: NoteSortByProps) => void;
+  onSort: (col: string) => void;
 }
 
 const HEAD_CLASS =

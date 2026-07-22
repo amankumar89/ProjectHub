@@ -59,7 +59,6 @@ const FormModal: React.FC<StudentFormModalProps> = ({ open, onClose, id }) => {
     register,
     handleSubmit,
     setValue,
-    watch,
     reset,
     formState: { errors },
   } = useForm<StudentFormData>({
@@ -233,7 +232,7 @@ const FormModal: React.FC<StudentFormModalProps> = ({ open, onClose, id }) => {
                   Status
                 </Label>
                 <Select
-                  value={watch("isActive")}
+                  value={studentData?.isActive ? "ACTIVE" : "INACTIVE"}
                   onValueChange={(val: string | null) => {
                     setValue("isActive", val === "ACTIVE");
                   }}
