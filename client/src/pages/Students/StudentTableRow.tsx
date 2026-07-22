@@ -4,7 +4,6 @@ import styled from "styled-components";
 import StudentAvatar from "./StudentAvatar";
 import StatusBadge from "@/components/StatusBadge";
 import { formatDate } from "@/utils/helper";
-import type { Student } from "@/types/global";
 
 const ActionBtn = styled.button.attrs({
   className: "p-1.5 rounded-lg transition-colors duration-150",

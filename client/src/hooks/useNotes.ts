@@ -6,14 +6,7 @@ import {
 } from "@tanstack/react-query";
 import api from "@/api/api";
 import toast from "react-hot-toast";
-import type {
-  ApiError,
-  ApiResponse,
-  CreateNoteInput,
-  Note,
-  NotesQueryParams,
-  Paginated,
-} from "@/types/global";
+
 import type { AxiosError } from "axios";
 
 const NOTES_KEY = "notes";

@@ -25,7 +25,6 @@ import NoteTableRow from "./NoteTableRow";
 import ListLoadingState from "@/components/ListLoadingState";
 import ListEmptyState from "@/components/ListEmptyState";
 import TablePagination from "@/components/TablePagination";
-import type { Note, NoteSortByProps, NotesQueryParams } from "@/types/global";
 
 const DEFAULT_FILTERS: NotesQueryParams = {
   page: 1,
@@ -65,10 +64,10 @@ const NotesPage: React.FC = () => {
     }
   };
 
-  const handleSort = (col: NoteSortByProps) => {
+  const handleSort = (col: string) => {
     setFilters((prev: NotesQueryParams) => ({
       ...prev,
-      sortBy: col,
+      sortBy: col as NoteSortByProps,
       sortOrder:
         prev.sortBy === col && prev.sortOrder === "asc" ? "desc" : "asc",
     }));

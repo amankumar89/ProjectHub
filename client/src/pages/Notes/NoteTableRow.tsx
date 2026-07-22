@@ -3,7 +3,6 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Pencil, Trash2, FileText } from "lucide-react";
 import styled from "styled-components";
 import { formatDate } from "@/utils/helper";
-import type { Note } from "@/types/global";
 
 interface NoteTableRowProps {
   note: Note;
