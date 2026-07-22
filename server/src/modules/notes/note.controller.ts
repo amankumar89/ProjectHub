@@ -27,7 +27,10 @@ const getAllNote = asyncHandler(async (req: Request, res: Response) => {
     limit,
   });
 
-  return sendSuccess(res, "Notes fetched successfully", result);
+  return sendSuccess(res, "Notes fetched successfully", {
+    notes: result.data,
+    pagination: result.pagination,
+  });
 });
 
 const getNoteById = asyncHandler(async (req: Request, res: Response) => {
