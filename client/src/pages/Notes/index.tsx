@@ -25,7 +25,6 @@ import NoteTableRow from "./NoteTableRow";
 import ListLoadingState from "@/components/ListLoadingState";
 import ListEmptyState from "@/components/ListEmptyState";
 import TablePagination from "@/components/TablePagination";
-import type { Note, NoteSortByProps, NotesQueryParams } from "@/types/global";
 
 const DEFAULT_FILTERS: NotesQueryParams = {
   page: 1,

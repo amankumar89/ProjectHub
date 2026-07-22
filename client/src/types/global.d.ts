@@ -115,7 +115,7 @@ type Paginated<T, K extends string = "data"> = {
   pagination: PaginationProps;
 } & Record<K, T[]>;
 
-export interface Note {
+interface Note {
   id: number;
   title: string;
   body: string | null;
@@ -124,17 +124,17 @@ export interface Note {
   updatedAt: Date;
 }
 
-export interface CreateNoteInput {
+interface CreateNoteInput {
   title: string;
   body?: string | null;
 }
 
-export interface UpdateNoteInput extends Partial<CreateNoteInput> {
+interface UpdateNoteInput extends Partial<CreateNoteInput> {
   id: number;
 }
 
-export type NoteSortByProps = "createdAt" | "updatedAt" | "title" | "id";
-export interface NotesQueryParams {
+type NoteSortByProps = "createdAt" | "updatedAt" | "title" | "id";
+interface NotesQueryParams {
   page?: number;
   limit?: number;
   sortBy: NoteSortByProps;

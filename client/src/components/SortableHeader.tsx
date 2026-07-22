@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import type { SortOrder } from "@/types/global";
 
 interface SortableHeaderProps {
   col: string;
