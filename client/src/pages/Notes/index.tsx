@@ -64,10 +64,10 @@ const NotesPage: React.FC = () => {
     }
   };
 
-  const handleSort = (col: NoteSortByProps) => {
+  const handleSort = (col: string) => {
     setFilters((prev: NotesQueryParams) => ({
       ...prev,
-      sortBy: col,
+      sortBy: col as NoteSortByProps,
       sortOrder:
         prev.sortBy === col && prev.sortOrder === "asc" ? "desc" : "asc",
     }));

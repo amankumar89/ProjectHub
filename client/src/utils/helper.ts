@@ -80,7 +80,7 @@ export const getInitials = (str: string) =>
     .toUpperCase()
     .slice(0, 2);
 
-export const formatDate = (iso: string | null): string => {
+export const formatDate = (iso: string | null | undefined): string => {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-IN", {
     day: "2-digit",

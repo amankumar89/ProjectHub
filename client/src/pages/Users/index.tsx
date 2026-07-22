@@ -208,7 +208,7 @@ const UsersPage: React.FC = () => {
                 onSort={handleSort}
               />
               <TableBody>
-                {users.map((user, idx) => (
+                {users.map((user: User, idx) => (
                   <UserTableRow
                     key={user.id}
                     user={user}

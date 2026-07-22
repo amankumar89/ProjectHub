@@ -5,7 +5,7 @@ import SortableHeader from "@/components/SortableHeader";
 interface NoteTableHeaderProps {
   sortBy?: string;
   order?: SortOrder;
-  onSort: (col: NoteSortByProps) => void;
+  onSort: (col: string) => void;
 }
 
 const HEAD_CLASS =
