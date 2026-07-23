@@ -13,7 +13,7 @@ interface UsersResponse {
 
 // ─── GET ALL (with filters) ───────────────────────────────────────────────────
 
-export const useGetUsers = (filters: UserFilters) => {
+export const useGetUsers = (filters?: UserFilters) => {
   return useQuery({
     queryKey: ["users", filters],
     queryFn: () =>

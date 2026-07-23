@@ -12,7 +12,6 @@ import {
 import { Table, TableBody } from "@/components/ui/table";
 import { Plus, Search, StickyNote } from "lucide-react";
 
-import { useNotes, useDeleteNote } from "@/hooks/useNotes";
 import { removeEmptyFields } from "@/utils/helper";
 
 import TaskFormModal from "./TaskFormModal";
@@ -22,8 +21,9 @@ import TaskTableRow from "./TaskTableRow";
 import ListLoadingState from "@/components/ListLoadingState";
 import ListEmptyState from "@/components/ListEmptyState";
 import TablePagination from "@/components/TablePagination";
+import { useDeleteTask, useTasks } from "@/hooks/useTasks";
 
-const DEFAULT_FILTERS: NotesQueryParams = {
+const DEFAULT_FILTERS: TasksFiltersParams = {
   page: 1,
   limit: 10,
   sortBy: "updatedAt",
@@ -32,23 +32,23 @@ const DEFAULT_FILTERS: NotesQueryParams = {
 };
 
 const TasksPage: React.FC = () => {
-  const [filters, setFilters] = useState<NotesQueryParams>(DEFAULT_FILTERS);
+  const [filters, setFilters] = useState<TasksFiltersParams>(DEFAULT_FILTERS);
   const [searchInput, setSearchInput] = useState<string | null>("");
 
   const [formOpen, setFormOpen] = useState<boolean>(false);
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<Note | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Task | null>(null);
 
-  const { data, isLoading, isError } = useNotes(removeEmptyFields(filters));
-  const { mutate: deleteNote, isPending: isDeleting } = useDeleteNote();
+  const { data, isLoading, isError } = useTasks(removeEmptyFields(filters));
+  const { mutate: deleteTask, isPending: isDeleting } = useDeleteTask();
 
-  const notes: Note[] = data?.notes ?? [];
+  const tasks: Task[] = data?.tasks ?? [];
   const total: number = data?.pagination?.total ?? 0;
 
   const updateFilter = useCallback(
-    <K extends keyof NotesQueryParams>(
+    <K extends keyof TasksFiltersParams>(
       key: K,
-      value: NotesQueryParams[K] | null,
+      value: TasksFiltersParams[K] | null,
     ) => {
       setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
     },
@@ -62,27 +62,27 @@ const TasksPage: React.FC = () => {
   };
 
   const handleSort = (col: string) => {
-    setFilters((prev: NotesQueryParams) => ({
+    setFilters((prev: TasksFiltersParams) => ({
       ...prev,
-      sortBy: col as NoteSortByProps,
+      sortBy: col as TaskSortByProps,
       sortOrder:
         prev.sortBy === col && prev.sortOrder === "asc" ? "desc" : "asc",
     }));
   };
 
   const handleCreate = () => {
-    setSelectedNote(null);
+    setSelectedTask(null);
     setFormOpen(true);
   };
 
-  const handleEdit = (note: Note) => {
-    setSelectedNote(note);
+  const handleEdit = (task: Task) => {
+    setSelectedTask(task);
     setFormOpen(true);
   };
 
   const handleDeleteConfirm = () => {
     if (!deleteTarget) return;
-    deleteNote(deleteTarget.id, {
+    deleteTask(deleteTarget.id, {
       onSuccess: () => {
         // setDeleteOpen(false);
         setDeleteTarget(null);
@@ -94,9 +94,9 @@ const TasksPage: React.FC = () => {
     <Wrapper>
       <Header>
         <TitleBlock>
-          <PageTitle>Notes</PageTitle>
+          <PageTitle>Tasks</PageTitle>
           <PageSub>
-            {total > 0 ? `${total} notes found` : "Manage all your notes"}
+            {total > 0 ? `${total} tasks found` : "Manage all your tasks"}
           </PageSub>
         </TitleBlock>
 
@@ -105,7 +105,7 @@ const TasksPage: React.FC = () => {
           className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm shadow-indigo-200"
         >
           <Plus size={16} />
-          Create Note
+          Create Task
         </Button>
       </Header>
 
@@ -145,17 +145,17 @@ const TasksPage: React.FC = () => {
 
         <TableWrap>
           {isLoading ? (
-            <ListLoadingState label="Loading notes..." />
+            <ListLoadingState label="Loading tasks..." />
           ) : isError ? (
             <ListEmptyState
               isError
-              title="Failed to load notes. Please try again."
+              title="Failed to load tasks. Please try again."
             />
-          ) : notes.length === 0 ? (
+          ) : tasks.length === 0 ? (
             <ListEmptyState
               icon={StickyNote}
-              title="No notes found"
-              subtitle="Try adjusting your filters or create a new note."
+              title="No tasks found"
+              subtitle="Try adjusting your filters or create a new task."
             />
           ) : (
             <Table>
@@ -165,13 +165,13 @@ const TasksPage: React.FC = () => {
                 onSort={handleSort}
               />
               <TableBody>
-                {notes.map((note, idx) => (
+                {tasks.map((task, idx) => (
                   <TaskTableRow
-                    key={note.id}
-                    note={note}
+                    key={task.id}
+                    task={task}
                     index={(filters.page! - 1) * filters.limit! + idx + 1}
                     onEdit={handleEdit}
-                    onDelete={(note: Note) => setDeleteTarget(note)}
+                    onDelete={(task: Task) => setDeleteTarget(task)}
                   />
                 ))}
               </TableBody>
@@ -179,7 +179,7 @@ const TasksPage: React.FC = () => {
           )}
         </TableWrap>
 
-        {!isLoading && notes.length > 0 && (
+        {!isLoading && tasks.length > 0 && (
           <TablePagination
             page={filters.page!}
             limit={filters.limit!}
@@ -193,9 +193,9 @@ const TasksPage: React.FC = () => {
         open={formOpen}
         onClose={() => {
           setFormOpen(false);
-          setSelectedNote(null);
+          setSelectedTask(null);
         }}
-        note={selectedNote}
+        task={selectedTask}
       />
 
       <DeleteConfirmDialog
