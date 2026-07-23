@@ -18,6 +18,7 @@ import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import { useDeleteTask, useTasks } from "@/hooks/useTasks";
 import TaskCard from "./TaskCard";
 import TablePagination from "@/components/TablePagination";
+import Loader from "@/components/Loader";
 
 const DEFAULT_FILTERS: TasksFiltersParams = {
   page: 1,
@@ -37,6 +38,8 @@ const TasksPage: React.FC = () => {
 
   const { data, isLoading } = useTasks(removeEmptyFields(filters));
   const { mutate: deleteTask, isPending: isDeleting } = useDeleteTask();
+
+  const loading = isLoading || isDeleting;
 
   const tasks: Task[] = data?.tasks ?? [];
   const total: number = data?.pagination?.total ?? 0;
@@ -138,7 +141,8 @@ const TasksPage: React.FC = () => {
             </Select>
           </FilterGroup>
         </FilterBar>
-        {tasks.length === 0 ? (
+        {loading && <Loader />}
+        {!loading && tasks.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-slate-200 py-16 text-center">
             <ClipboardList className="h-8 w-8 text-slate-300" />
             <p className="text-sm font-medium text-slate-500">No tasks yet</p>
@@ -147,18 +151,20 @@ const TasksPage: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 px-4">
-            {tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onEdit={handleEdit}
-                onDelete={(task: Task) => setDeleteTarget(task)}
-              />
-            ))}
-          </div>
+          !loading && (
+            <div className="grid grid-cols-2 gap-4 px-4">
+              {tasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onEdit={handleEdit}
+                  onDelete={(task: Task) => setDeleteTarget(task)}
+                />
+              ))}
+            </div>
+          )
         )}
-        {!isLoading && tasks.length > 0 && (
+        {!loading && tasks.length > 0 && (
           <TablePagination
             page={filters.page!}
             limit={filters.limit!}
@@ -174,7 +180,7 @@ const TasksPage: React.FC = () => {
           setFormOpen(false);
           setSelectedTask(null);
         }}
-        task={selectedTask}
+        taskId={selectedTask?.id}
       />
 
       <DeleteConfirmDialog
