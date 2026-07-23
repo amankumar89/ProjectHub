@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import styled from "styled-components";
-import { useCreateTask, useUpdateTask } from "@/hooks/useTasks";
+import { useCreateTask, useTaskById, useUpdateTask } from "@/hooks/useTasks";
 import { useGetUsers } from "@/hooks/useUsers";
 import Modal from "@/components/Modal";
 import { useAuthStore } from "@/store/authStore";
@@ -10,20 +10,21 @@ import { useAuthStore } from "@/store/authStore";
 interface TaskFormModalProps {
   open: boolean;
   onClose: () => void;
-  task?: Task | null;
+  taskId?: number | null;
 }
 
 const TaskFormModal: React.FC<TaskFormModalProps> = ({
   open,
   onClose,
-  task,
+  taskId,
 }) => {
+  const { data: task, isLoading } = useTaskById(taskId!);
   const { user } = useAuthStore();
   const createTaskMutation = useCreateTask();
   const updateTaskMutation = useUpdateTask();
   const { data, isLoading: usersLoading } = useGetUsers();
   const isSubmitting =
-    createTaskMutation.isPending || updateTaskMutation.isPending;
+    isLoading || createTaskMutation.isPending || updateTaskMutation.isPending;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -50,9 +51,10 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
   const users = data?.users ?? [];
 
   const assignedToValue = watch("assignedTo");
+  console.log(task);
 
   useEffect(() => {
-    if (task) {
+    if (task?.id) {
       reset({
         title: task.title,
         description: task.description || "",
@@ -113,7 +115,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
       saveText={task?.id ? "Update" : "Create"}
       onSave={handleSubmit(onSubmit)}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="overflow-auto">
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FormGroup>
           <Label>Title *</Label>
           <Input
@@ -189,69 +191,71 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
           />
           {errors.dueDate && <ErrorText>{errors.dueDate.message}</ErrorText>}
         </FormGroup>
-
-        <FormGroup>
-          <Label>Assign To</Label>
-          <SearchContainer>
-            <SearchInputWrapper>
-              <SearchIcon>
-                <Search size={16} />
-              </SearchIcon>
-              <SearchInput
-                type="text"
-                placeholder="Search user by name or ID..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setIsSearchOpen(true);
-                }}
-                onFocus={() => setIsSearchOpen(true)}
-                disabled={isSubmitting}
-              />
-              {selectedUser && (
-                <SelectedUserTag>
-                  <span>{selectedUser.name}</span>
-                  <ClearButton
-                    type="button"
-                    onClick={() => {
-                      setValue("assignedTo", null);
-                      setSearchTerm("");
-                    }}
-                  >
-                    ×
-                  </ClearButton>
-                </SelectedUserTag>
-              )}
-            </SearchInputWrapper>
-
-            {isSearchOpen && !selectedUser && (
-              <UserDropdown>
-                {usersLoading ? (
-                  <DropdownItem>Loading users...</DropdownItem>
-                ) : filteredUsers.length === 0 ? (
-                  <DropdownItem>No users found</DropdownItem>
-                ) : (
-                  filteredUsers.map((user: User) => (
-                    <DropdownItem
-                      key={user.id}
-                      onClick={() => {
-                        setValue("assignedTo", Number(user!.id));
-                        setSearchTerm("");
-                        setIsSearchOpen(false);
-                      }}
-                    >
-                      <UserInfo>
-                        <UserName>{user.name}</UserName>
-                        <UserEmail>{user.email}</UserEmail>
-                      </UserInfo>
-                      <UserId>ID: {user.id}</UserId>
-                    </DropdownItem>
-                  ))
-                )}
-              </UserDropdown>
+        {user?.role === "ADMIN" && (
+          <FormGroup>
+            <Label>Assign To</Label>
+            {selectedUser && (
+              <SelectedUserTag>
+                <span>{selectedUser.name}</span>
+                <ClearButton
+                  type="button"
+                  onClick={() => {
+                    setValue("assignedTo", null);
+                    setSearchTerm("");
+                  }}
+                >
+                  ×
+                </ClearButton>
+              </SelectedUserTag>
             )}
-          </SearchContainer>
-        </FormGroup>
+            <SearchContainer>
+              {!selectedUser && (
+                <SearchInputWrapper>
+                  <SearchIcon>
+                    <Search size={16} />
+                  </SearchIcon>
+                  <SearchInput
+                    type="text"
+                    placeholder="Search user by name or ID..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setIsSearchOpen(true);
+                    }}
+                    onFocus={() => setIsSearchOpen(true)}
+                    disabled={isSubmitting}
+                  />
+                </SearchInputWrapper>
+              )}
+              {isSearchOpen && !selectedUser && (
+                <UserDropdown>
+                  {usersLoading ? (
+                    <DropdownItem>Loading users...</DropdownItem>
+                  ) : filteredUsers.length === 0 ? (
+                    <DropdownItem>No users found</DropdownItem>
+                  ) : (
+                    filteredUsers.map((user: User) => (
+                      <DropdownItem
+                        key={user.id}
+                        onClick={() => {
+                          setValue("assignedTo", Number(user!.id));
+                          setSearchTerm("");
+                          setIsSearchOpen(false);
+                        }}
+                      >
+                        <UserInfo>
+                          <UserName>{user.name}</UserName>
+                          <UserEmail>{user.email}</UserEmail>
+                        </UserInfo>
+                        <UserId>ID: {user.id}</UserId>
+                      </DropdownItem>
+                    ))
+                  )}
+                </UserDropdown>
+              )}
+            </SearchContainer>
+          </FormGroup>
+        )}
       </form>
     </Modal>
   );
@@ -385,16 +389,16 @@ const SearchInput = styled.input`
 `;
 
 const SelectedUserTag = styled.div`
-  position: absolute;
-  right: 0.5rem;
   display: flex;
+  width: fit-content;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   background: #e0e7ff;
   color: #4338ca;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 1rem;
   border-radius: 6px;
-  font-size: 0.75rem;
+  font-size: 1rem;
   font-weight: 500;
 `;
 
