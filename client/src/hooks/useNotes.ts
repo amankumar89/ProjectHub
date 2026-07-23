@@ -56,7 +56,7 @@ export const useNotes = (filters: Partial<NotesQueryParams>) => {
   });
 };
 
-export const useNote = (id: number | undefined) => {
+export const useNoteById = (id: number | undefined) => {
   return useQuery({
     queryKey: [NOTES_KEY, id],
     queryFn: () => fetchNoteById(id!),

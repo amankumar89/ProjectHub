@@ -25,7 +25,7 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent className="rounded-2xl max-w-md">
+      <AlertDialogContent className="rounded-2xl max-w-lg">
         <div className="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-1">
           <Trash2 size={22} className="text-red-500" />
         </div>

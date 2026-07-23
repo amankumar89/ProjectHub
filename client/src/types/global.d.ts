@@ -141,3 +141,35 @@ interface NotesQueryParams {
   sortOrder: "asc" | "desc";
   search?: string;
 }
+
+interface TaskUser {
+  id: number | string;
+  name: string;
+}
+interface Task {
+  id: number;
+  title: string;
+  description: string | null;
+  status: "TODO" | "IN_PROGRESS" | "COMPLETED";
+  priority: "LOW" | "MEDIUM" | "HIGH";
+  dueDate: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  assignedTo: TaskUser | null;
+  createdBy: TaskUser | null;
+}
+
+type TaskSortByProps = "createdAt" | "updatedAt" | "title" | "id";
+
+interface TasksFiltersParams {
+  page?: number;
+  limit?: number;
+  sortBy: TaskSortByProps;
+  sortOrder: "asc" | "desc";
+  search?: string;
+}
+
+type TaskFormDataProps = Omit<Partial<Task>, "assignedTo" | "createdBy"> & {
+  assignedTo: number | null;
+  createdBy: number | null;
+};
