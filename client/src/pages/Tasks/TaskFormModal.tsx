@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { X, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import styled from "styled-components";
 import { useCreateTask, useUpdateTask } from "@/hooks/useTasks";
 import { useGetUsers } from "@/hooks/useUsers";
