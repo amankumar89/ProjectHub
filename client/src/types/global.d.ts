@@ -142,6 +142,10 @@ interface NotesQueryParams {
   search?: string;
 }
 
+interface TaskUser {
+  id: number | string;
+  name: string;
+}
 interface Task {
   id: number;
   title: string;
@@ -151,8 +155,8 @@ interface Task {
   dueDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  assignedTo: number | null;
-  createdBy: number;
+  assignedTo: TaskUser | null;
+  createdBy: TaskUser | null;
 }
 
 type TaskSortByProps = "createdAt" | "updatedAt" | "title" | "id";
@@ -164,3 +168,8 @@ interface TasksFiltersParams {
   sortOrder: "asc" | "desc";
   search?: string;
 }
+
+type TaskFormDataProps = Omit<Partial<Task>, "assignedTo" | "createdBy"> & {
+  assignedTo: number | null;
+  createdBy: number | null;
+};

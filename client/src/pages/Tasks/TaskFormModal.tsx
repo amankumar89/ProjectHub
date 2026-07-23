@@ -13,8 +13,6 @@ interface TaskFormModalProps {
   task?: Task | null;
 }
 
-type FormDataProps = Partial<Task>;
-
 const TaskFormModal: React.FC<TaskFormModalProps> = ({
   open,
   onClose,
@@ -37,7 +35,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
     setValue,
     watch,
     formState: { errors },
-  } = useForm<FormDataProps>({
+  } = useForm<TaskFormDataProps>({
     defaultValues: {
       title: "",
       description: "",
@@ -61,7 +59,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
         status: task.status,
         priority: task.priority,
         dueDate: task.dueDate,
-        assignedTo: task.assignedTo,
+        assignedTo: Number(task!.assignedTo!.id!),
       });
     } else {
       reset({
@@ -75,12 +73,12 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
     }
   }, [task, reset]);
 
-  const onSubmit = async (data: FormDataProps) => {
-    const payload: Partial<Task> = {
+  const onSubmit = async (data: TaskFormDataProps) => {
+    const payload: TaskFormDataProps = {
       ...data,
       dueDate: new Date(data.dueDate!),
-      createdBy: currentUserId,
-      assignedTo: data?.assignedTo ?? currentUserId,
+      createdBy: currentUserId!,
+      assignedTo: data.assignedTo! ?? currentUserId,
     };
 
     if (task?.id) {
@@ -237,7 +235,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
                     <DropdownItem
                       key={user.id}
                       onClick={() => {
-                        setValue("assignedTo", user.id);
+                        setValue("assignedTo", Number(user!.id));
                         setSearchTerm("");
                         setIsSearchOpen(false);
                       }}

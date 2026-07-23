@@ -25,7 +25,7 @@ const fetchTaskById = async (id: number) => {
   return data.data;
 };
 
-const createTask = async (payload: Partial<Task>) => {
+const createTask = async (payload: TaskFormDataProps) => {
   const { data } = await api.post<ApiResponse<Task>>("/tasks", payload);
   return data.data;
 };
@@ -35,7 +35,7 @@ const updateTask = async ({
   payload,
 }: {
   id: number;
-  payload: Partial<Task>;
+  payload: TaskFormDataProps;
 }) => {
   const { data } = await api.put<ApiResponse<Task>>(`/tasks/${id}`, payload);
   return data.data;

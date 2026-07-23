@@ -9,19 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Table, TableBody } from "@/components/ui/table";
-import { Plus, Search, StickyNote } from "lucide-react";
+import { ClipboardList, Plus, Search } from "lucide-react";
 
 import { removeEmptyFields } from "@/utils/helper";
 
 import TaskFormModal from "./TaskFormModal";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
-import TaskTableHeader from "./TaskTableHeader";
-import TaskTableRow from "./TaskTableRow";
-import ListLoadingState from "@/components/ListLoadingState";
-import ListEmptyState from "@/components/ListEmptyState";
-import TablePagination from "@/components/TablePagination";
 import { useDeleteTask, useTasks } from "@/hooks/useTasks";
+import TaskCard from "./TaskCard";
+import TablePagination from "@/components/TablePagination";
 
 const DEFAULT_FILTERS: TasksFiltersParams = {
   page: 1,
@@ -39,7 +35,7 @@ const TasksPage: React.FC = () => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Task | null>(null);
 
-  const { data, isLoading, isError } = useTasks(removeEmptyFields(filters));
+  const { data, isLoading } = useTasks(removeEmptyFields(filters));
   const { mutate: deleteTask, isPending: isDeleting } = useDeleteTask();
 
   const tasks: Task[] = data?.tasks ?? [];
@@ -61,14 +57,14 @@ const TasksPage: React.FC = () => {
     }
   };
 
-  const handleSort = (col: string) => {
-    setFilters((prev: TasksFiltersParams) => ({
-      ...prev,
-      sortBy: col as TaskSortByProps,
-      sortOrder:
-        prev.sortBy === col && prev.sortOrder === "asc" ? "desc" : "asc",
-    }));
-  };
+  // const handleSort = (col: string) => {
+  //   setFilters((prev: TasksFiltersParams) => ({
+  //     ...prev,
+  //     sortBy: col as TaskSortByProps,
+  //     sortOrder:
+  //       prev.sortBy === col && prev.sortOrder === "asc" ? "desc" : "asc",
+  //   }));
+  // };
 
   const handleCreate = () => {
     setSelectedTask(null);
@@ -142,43 +138,26 @@ const TasksPage: React.FC = () => {
             </Select>
           </FilterGroup>
         </FilterBar>
-
-        <TableWrap>
-          {isLoading ? (
-            <ListLoadingState label="Loading tasks..." />
-          ) : isError ? (
-            <ListEmptyState
-              isError
-              title="Failed to load tasks. Please try again."
-            />
-          ) : tasks.length === 0 ? (
-            <ListEmptyState
-              icon={StickyNote}
-              title="No tasks found"
-              subtitle="Try adjusting your filters or create a new task."
-            />
-          ) : (
-            <Table>
-              <TaskTableHeader
-                sortBy={filters.sortBy}
-                order={filters.sortOrder}
-                onSort={handleSort}
+        {tasks.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-slate-200 py-16 text-center">
+            <ClipboardList className="h-8 w-8 text-slate-300" />
+            <p className="text-sm font-medium text-slate-500">No tasks yet</p>
+            <p className="text-xs text-slate-400">
+              Create a task to see it show up here.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 px-4">
+            {tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onEdit={handleEdit}
+                onDelete={(task: Task) => setDeleteTarget(task)}
               />
-              <TableBody>
-                {tasks.map((task, idx) => (
-                  <TaskTableRow
-                    key={task.id}
-                    task={task}
-                    index={(filters.page! - 1) * filters.limit! + idx + 1}
-                    onEdit={handleEdit}
-                    onDelete={(task: Task) => setDeleteTarget(task)}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </TableWrap>
-
+            ))}
+          </div>
+        )}
         {!isLoading && tasks.length > 0 && (
           <TablePagination
             page={filters.page!}
@@ -219,7 +198,7 @@ const Wrapper = styled.div.attrs({
 
 const Header = styled.div.attrs({
   className:
-    "flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8",
+    "flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2",
 })``;
 
 const TitleBlock = styled.div.attrs({ className: "flex flex-col" })``;
@@ -233,8 +212,7 @@ const PageSub = styled.p.attrs({
 })``;
 
 const Card = styled.div.attrs({
-  className:
-    "bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden",
+  className: "bg-white rounded-2xl border border-gray-100 shadow-sm",
 })``;
 
 const FilterBar = styled.div.attrs({
@@ -255,6 +233,6 @@ const FilterGroup = styled.div.attrs({
   className: "flex items-center gap-2 flex-wrap",
 })``;
 
-const TableWrap = styled.div.attrs({
-  className: "overflow-x-auto",
-})``;
+// const TableWrap = styled.div.attrs({
+//   className: "overflow-x-auto",
+// })``;
