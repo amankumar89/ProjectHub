@@ -5,7 +5,7 @@ import type { AxiosError } from "axios";
 
 type UsersApiResponse = ApiResponse<Paginated<User, "users">>;
 
-export const useGetUsers = (filters: UserFilters) => {
+export const useGetUsers = (filters?: UserFilters) => {
   return useQuery({
     queryKey: ["users", filters],
     queryFn: () =>

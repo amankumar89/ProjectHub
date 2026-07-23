@@ -57,8 +57,8 @@ const ALL_CARDS: Record<string, CardItem> = {
 const ROLE_CARDS: Record<string, string[]> = {
   ADMIN: ["users", "students", "notes", "tasks"],
   TEACHER: ["students", "notes", "tasks"],
-  STUDENT: ["tasks", "notes"],
-  USER: ["tasks", "notes"],
+  STUDENT: ["notes", "tasks"],
+  USER: ["notes", "tasks"],
 };
 
 const getCards = (role: string): CardItem[] =>
