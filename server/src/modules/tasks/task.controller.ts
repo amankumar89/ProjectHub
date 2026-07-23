@@ -10,7 +10,13 @@ import tasksService from "../../services/task.service";
 
 // CREATE TASK
 const createTask = asyncHandler(async (req: Request, res: Response) => {
-  const { title, description, priority, dueDate, assignedTo } = req.body;
+  const {
+    title,
+    description,
+    priority,
+    dueDate,
+    assignedTo = req.user!.id,
+  } = req.body;
 
   if (assignedTo) {
     const assignee = await tasksService.findUserById(assignedTo);
@@ -40,7 +46,7 @@ const getAllTask = asyncHandler(async (req: Request, res: Response) => {
   const result = await tasksService.listTasksForUser(user, { page, limit });
 
   return sendSuccess(res, "Tasks fetched successfully", {
-    data: result.data,
+    tasks: result.data,
     pagination: result.pagination,
   });
 });

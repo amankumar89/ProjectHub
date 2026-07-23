@@ -11,98 +11,96 @@ import type { AxiosError } from "axios";
 
 const TASKS_KEY = "tasks";
 
-type TasksApiResponse = ApiResponse<Paginated<Note, "tasks">>;
+type TasksApiResponse = ApiResponse<Paginated<Task, "tasks">>;
 
-const fetchNotes = async (filters: Partial<NotesQueryParams>) => {
-  const { data } = await api.get<TasksApiResponse>("/notes", {
+const fetchTasks = async (filters: Partial<TasksFiltersParams>) => {
+  const { data } = await api.get<TasksApiResponse>("/tasks", {
     params: filters,
   });
   return data?.data;
 };
 
-const fetchNoteById = async (id: number) => {
-  const { data } = await api.get<ApiResponse<Note>>(`/notes/${id}`);
+const fetchTaskById = async (id: number) => {
+  const { data } = await api.get<ApiResponse<Task>>(`/tasks/${id}`);
   return data.data;
 };
 
-const createNoteRequest = async (payload: CreateNoteInput) => {
-  const { data } = await api.post<ApiResponse<Note>>("/notes", payload);
+const createTask = async (payload: Partial<Task>) => {
+  const { data } = await api.post<ApiResponse<Task>>("/tasks", payload);
   return data.data;
 };
 
-const updateNoteRequest = async ({
+const updateTask = async ({
   id,
   payload,
 }: {
   id: number;
-  payload: CreateNoteInput;
+  payload: Partial<Task>;
 }) => {
-  const { data } = await api.put<ApiResponse<Note>>(`/notes/${id}`, payload);
+  const { data } = await api.put<ApiResponse<Task>>(`/tasks/${id}`, payload);
   return data.data;
 };
 
-const deleteNoteRequest = async (id: number) => {
-  const { data } = await api.delete<ApiResponse<void>>(`/notes/${id}`);
+const deleteTasks = async (id: number) => {
+  const { data } = await api.delete<ApiResponse<void>>(`/tasks/${id}`);
   return data;
 };
 
-// ---- hooks ----
-
-export const useNotes = (filters: Partial<NotesQueryParams>) => {
+export const useTasks = (filters: Partial<TasksFiltersParams>) => {
   return useQuery({
     queryKey: [TASKS_KEY, filters],
-    queryFn: () => fetchNotes(filters),
+    queryFn: () => fetchTasks(filters),
     placeholderData: keepPreviousData,
   });
 };
 
-export const useNote = (id: number | undefined) => {
+export const useTaskById = (id: number | undefined) => {
   return useQuery({
     queryKey: [TASKS_KEY, id],
-    queryFn: () => fetchNoteById(id!),
+    queryFn: () => fetchTaskById(id!),
     enabled: !!id,
   });
 };
 
-export const useCreateNote = () => {
+export const useCreateTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createNoteRequest,
+    mutationFn: createTask,
     onSuccess: () => {
-      toast.success("Note created successfully");
+      toast.success("Task created successfully");
       queryClient.invalidateQueries({ queryKey: [TASKS_KEY] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toast.error(error?.response?.data?.message || "Failed to create note");
+      toast.error(error?.response?.data?.message || "Failed to create task");
     },
   });
 };
 
-export const useUpdateNote = () => {
+export const useUpdateTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: updateNoteRequest,
+    mutationFn: updateTask,
     onSuccess: (updated) => {
-      toast.success("Note updated successfully");
+      toast.success("Task updated successfully");
       queryClient.invalidateQueries({ queryKey: [TASKS_KEY] });
       queryClient.setQueryData([TASKS_KEY, updated.id], updated);
     },
     onError: (error: AxiosError<ApiError>) => {
-      toast.error(error?.response?.data?.message || "Failed to update note");
+      toast.error(error?.response?.data?.message || "Failed to update task");
     },
   });
 };
 
-export const useDeleteNote = () => {
+export const useDeleteTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteNoteRequest,
+    mutationFn: deleteTasks,
     onSuccess: () => {
-      toast.success("Note deleted successfully");
+      toast.success("Task deleted successfully");
       queryClient.invalidateQueries({ queryKey: [TASKS_KEY] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toast.error(error?.response?.data?.message || "Failed to delete note");
+      toast.error(error?.response?.data?.message || "Failed to delete task");
     },
   });
 };

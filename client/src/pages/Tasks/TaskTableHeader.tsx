@@ -2,7 +2,7 @@ import React from "react";
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SortableHeader from "@/components/SortableHeader";
 
-interface NoteTableHeaderProps {
+interface TaskTableHeaderProps {
   sortBy?: string;
   order?: SortOrder;
   onSort: (col: string) => void;
@@ -11,7 +11,7 @@ interface NoteTableHeaderProps {
 const HEAD_CLASS =
   "text-xs font-semibold text-gray-500 uppercase tracking-wide";
 
-const NoteTableHeader: React.FC<NoteTableHeaderProps> = ({
+const TaskTableHeader: React.FC<TaskTableHeaderProps> = ({
   sortBy,
   order,
   onSort,
@@ -64,4 +64,4 @@ const NoteTableHeader: React.FC<NoteTableHeaderProps> = ({
   );
 };
 
-export default NoteTableHeader;
+export default TaskTableHeader;
